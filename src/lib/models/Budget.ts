@@ -40,7 +40,8 @@ const budgetSchema = new mongoose.Schema<IBudget>({
     required: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  versionKey: false
 });
 
 export const Budget = (mongoose.models.Budget as Model<IBudget>) || 

@@ -43,7 +43,8 @@ const userSchema = new mongoose.Schema<IUser>({
     }
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  versionKey: false
 });
 
 export const User = (mongoose.models.User as Model<IUser>) || 

@@ -12,7 +12,7 @@ export type TransactionCategory =
   | 'Shopping'
   | 'General';
 
-interface ITransaction {
+export interface ITransaction {
   userId: string;
   avatar: string;
   name: string;
@@ -65,7 +65,8 @@ const transactionSchema = new mongoose.Schema<ITransaction>({
     default: false
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  versionKey: false
 });
 
 // Indexes for efficient searching and sorting

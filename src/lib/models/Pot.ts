@@ -34,7 +34,8 @@ const potSchema = new mongoose.Schema<IPot>({
     required: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  versionKey: false
 });
 
 export const Pot = (mongoose.models.Pot as Model<IPot>) || 

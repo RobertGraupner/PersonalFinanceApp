@@ -1,0 +1,33 @@
+export interface QueryParams {
+  page: number;
+  limit: number;
+  category?: string;
+  search?: string;
+  sort?: 'latest' | 'oldest' | 'a-z' | 'z-a' | 'highest' | 'lowest';
+}
+
+export interface TransactionQuery {
+  category?: string;
+  name?: { $regex: string; $options: string };
+  date?: {
+    $gte: Date;
+    $lte: Date;
+  };
+}
+
+export interface SortQuery {
+  [key: string]: 1 | -1;
+}
+
+export interface PaginationResponse {
+  total: number;
+  pages: number;
+  currentPage: number;
+  perPage: number;
+}
+
+export interface ApiResponse<T> {
+  data?: T;
+  pagination?: PaginationResponse;
+  error?: string;
+}
