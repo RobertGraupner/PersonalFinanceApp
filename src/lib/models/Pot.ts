@@ -1,6 +1,6 @@
 import mongoose, { Model } from 'mongoose';
 
-interface IPot {
+export interface IPot {
   userId: string;
   name: string;
   target: number;

@@ -31,3 +31,8 @@ export interface ApiResponse<T> {
   pagination?: PaginationResponse;
   error?: string;
 }
+
+export interface MoneyOperation {
+  amount: number;
+  operation: 'add' | 'withdraw';
+}

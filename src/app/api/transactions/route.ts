@@ -2,7 +2,12 @@ import { NextRequest } from 'next/server';
 import { connectDB } from '@/lib/db/db';
 import { Transaction } from '@/lib/models/Transaction';
 import type { ITransaction } from '@/lib/models/Transaction';
-import type { TransactionQuery, SortQuery, ApiResponse, QueryParams } from '@/types/api';
+import type {
+  TransactionQuery,
+  SortQuery,
+  ApiResponse,
+  QueryParams,
+} from '@/types/api';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,11 +20,11 @@ export async function GET(request: NextRequest) {
       limit: Number(searchParams.get('limit')) || 10,
       category: searchParams.get('category') || undefined,
       search: searchParams.get('search') || undefined,
-      sort: (searchParams.get('sort') as QueryParams['sort']) || 'latest'
+      sort: (searchParams.get('sort') as QueryParams['sort']) || 'latest',
     };
 
     const query: TransactionQuery = {};
-    
+
     if (params.category) {
       query.category = params.category;
     }
@@ -62,8 +67,8 @@ export async function GET(request: NextRequest) {
         total,
         pages: Math.ceil(total / params.limit),
         currentPage: params.page,
-        perPage: params.limit
-      }
+        perPage: params.limit,
+      },
     };
 
     return Response.json(response);
@@ -71,7 +76,7 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching transactions:', error);
 
     const errorResponse: ApiResponse<never> = {
-      error: 'An error occurred while fetching transactions'
+      error: 'An error occurred while fetching transactions',
     };
 
     return Response.json(errorResponse, { status: 500 });
@@ -81,12 +86,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
-    const body: Omit<ITransaction, '_id' | 'createdAt' | 'updatedAt'> = await request.json();
+    const body: Omit<ITransaction, '_id' | 'createdAt' | 'updatedAt'> =
+      await request.json();
 
     const transaction = await Transaction.create(body);
 
     const response: ApiResponse<ITransaction> = {
-      data: transaction
+      data: transaction,
     };
 
     return Response.json(response, { status: 201 });
@@ -94,7 +100,7 @@ export async function POST(request: NextRequest) {
     console.error('Error creating transaction:', error);
 
     const errorResponse: ApiResponse<never> = {
-      error: 'An error occurred while creating a transaction'
+      error: 'An error occurred while creating a transaction',
     };
 
     return Response.json(errorResponse, { status: 500 });
