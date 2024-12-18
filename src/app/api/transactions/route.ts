@@ -21,6 +21,9 @@ export async function GET(request: NextRequest) {
       category: searchParams.get('category') || undefined,
       search: searchParams.get('search') || undefined,
       sort: (searchParams.get('sort') as QueryParams['sort']) || 'latest',
+      recurring: searchParams.has('recurring')
+        ? searchParams.get('recurring') === 'true'
+        : undefined,
     };
 
     const query: TransactionQuery = {};
@@ -31,6 +34,10 @@ export async function GET(request: NextRequest) {
 
     if (params.search) {
       query.name = { $regex: params.search, $options: 'i' };
+    }
+
+    if (params.recurring !== undefined) {
+      query.recurring = params.recurring;
     }
 
     let sortQuery: SortQuery = {};

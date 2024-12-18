@@ -4,15 +4,13 @@ export interface QueryParams {
   category?: string;
   search?: string;
   sort?: 'latest' | 'oldest' | 'a-z' | 'z-a' | 'highest' | 'lowest';
+  recurring?: boolean;
 }
 
 export interface TransactionQuery {
   category?: string;
   name?: { $regex: string; $options: string };
-  date?: {
-    $gte: Date;
-    $lte: Date;
-  };
+  recurring?: boolean;
 }
 
 export interface SortQuery {
