@@ -45,3 +45,6 @@ next-env.d.ts
 
 # project descriptions
 DESCRIPTION.md
+
+# design-folder
+design/
