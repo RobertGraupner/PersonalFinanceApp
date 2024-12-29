@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,6 +17,7 @@ export default function LoginForm() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string>('');
 
   const {
     register,
@@ -25,10 +27,20 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      console.log(data);
-      router.push('/dashboard');
+      const result = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+
+      router.push('/transactions');
     } catch (error) {
-      console.error('Login failed:', error);
+      setError('An error occurred during login:' + error);
     }
   };
 
@@ -120,14 +132,16 @@ export default function LoginForm() {
             )}
           </div>
         </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="flex w-full items-center justify-center rounded-[8px] bg-grey900 py-4 text-preset-4 font-bold text-white transition-colors hover:bg-grey900/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beige500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-        >
-          {isSubmitting ? 'Logging in...' : 'Log in'}
-        </button>
+        <div className="relative">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex w-full items-center justify-center rounded-[8px] bg-grey900 py-4 text-preset-4 font-bold text-white transition-colors hover:bg-grey900/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beige500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          >
+            {isSubmitting ? 'Logging in...' : 'Log in'}
+          </button>
+          {error && <p className="absolute text-xs text-red">{error}</p>}
+        </div>
       </form>
 
       <div className="text-center">

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -15,6 +16,7 @@ type RegisterFormValues = {
 export default function RegisterForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string>('');
 
   const {
     register,
@@ -24,11 +26,35 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterFormValues) => {
     try {
-      // TODO: Implement registration logic
-      console.log(data);
-      router.push('/dashboard');
+      setError('');
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error || 'An error occurred during registration');
+        return;
+      }
+
+      // After successful registration, log in the user
+      const signInResult = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        setError(signInResult.error);
+        return;
+      }
+
+      router.push('/transactions');
     } catch (error) {
-      console.error('Registration failed:', error);
+      setError('An error occurred during registration:' + error);
     }
   };
 
@@ -109,6 +135,12 @@ export default function RegisterForm() {
                     value: 8,
                     message: 'Password must be at least 8 characters',
                   },
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message:
+                      'Password must contain uppercase letter, number, and special character',
+                  },
                 })}
                 type={showPassword ? 'text' : 'password'}
                 className="mt-1 flex h-10 w-full rounded-[8px] border border-beige500 px-3 py-2 text-preset-4 outline-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-beige500"
@@ -146,14 +178,16 @@ export default function RegisterForm() {
             )}
           </div>
         </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="flex w-full items-center justify-center rounded-[8px] bg-grey900 py-4 text-preset-4 font-bold text-white transition-colors hover:bg-grey900/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beige500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-        >
-          {isSubmitting ? 'Creating account...' : 'Create account'}
-        </button>
+        <div className="relative">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex w-full items-center justify-center rounded-[8px] bg-grey900 py-4 text-preset-4 font-bold text-white transition-colors hover:bg-grey900/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beige500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          >
+            {isSubmitting ? 'Creating account...' : 'Create account'}
+          </button>
+          {error && <p className="absolute text-xs text-red">{error}</p>}
+        </div>
       </form>
 
       <div className="text-center">
