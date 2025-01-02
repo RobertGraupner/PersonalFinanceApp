@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Public_Sans } from 'next/font/google';
 import './globals.css';
-import Providers from '@/providers/providers';
+import Providers from '@/providers/Providers';
 
 const publicSans = Public_Sans({
   variable: '--font-public-sans',

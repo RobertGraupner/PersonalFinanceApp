@@ -1,1 +1,1 @@
-export { default } from '@/components/auth/register-form';
+export { default } from '@/components/Auth/RegisterForm';
