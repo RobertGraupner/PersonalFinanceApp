@@ -1,17 +1,30 @@
-import { withAuth } from 'next-auth/middleware';
+import { withAuth, NextAuthMiddlewareOptions } from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
 
-export default withAuth({
-  callbacks: {
-    authorized: ({ token, req }) => {
-      const url = req.nextUrl.pathname;
-      if (url.startsWith('/login') || url.startsWith('/register')) {
-        return true;
-      }
+export default withAuth(
+  function middleware(req) {
+    // actual url
+    const url = req.nextUrl.pathname;
+    // information from next about the login user
+    const token = req.nextauth.token;
 
-      return !!token;
-    },
+    // If the user is already logged in, redirect to the overview page
+    if ((url.startsWith('/login') || url.startsWith('/register')) && token) {
+      return NextResponse.redirect(new URL('/overview', req.url));
+    }
+
+    if (url === '/' && token) {
+      return NextResponse.redirect(new URL('/overview', req.url));
+    }
+    // continue normal flow
+    return NextResponse.next();
   },
-});
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token,
+    },
+  } as NextAuthMiddlewareOptions
+);
 
 export const config = {
   matcher: [
@@ -19,5 +32,6 @@ export const config = {
     '/budgets/:path*',
     '/pots/:path*',
     '/overview/:path*',
+    '/recurring/:path*',
   ],
 };
