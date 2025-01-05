@@ -34,8 +34,8 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
 
-    --icon-active-filter: brightness(0) saturate(100%) invert(46%) sepia(99%)
-      saturate(389%) hue-rotate(127deg) brightness(91%) contrast(101%);
+    --icon-active-filter: brightness(0) saturate(100%) invert(47%) sepia(11%)
+      saturate(1013%) hue-rotate(140deg) brightness(91%) contrast(89%);
   }
   .dark {
     --background: 240 10% 3.9%;

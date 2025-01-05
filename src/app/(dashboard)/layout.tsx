@@ -9,8 +9,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [isMinimized, setIsMinimized] = useState(false);
 
   return (
-    <div className="h-screen overflow-x-hidden bg-beige100">
-      <div className="flex h-screen">
+    <div className="min-h-screen overflow-x-hidden bg-beige100">
+      <div className="flex min-h-screen">
         {/* Navigation */}
         <Navigation
           isMinimized={isMinimized}
@@ -21,7 +21,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div
           className={cn(
             'flex-1 transition-all duration-300',
-            isMinimized ? 'md:ml-20' : 'md:ml-64',
+            isMinimized && 'md:ml-20',
             'ml-0'
           )}
         >

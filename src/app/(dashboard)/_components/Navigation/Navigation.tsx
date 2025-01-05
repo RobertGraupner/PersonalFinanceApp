@@ -1,126 +1,55 @@
 'use client';
 
+import type { NavigationProps } from '@/types/navigation';
+import { Logo } from './Logo';
 import { NavItem } from './NavItem';
-import Image from 'next/image';
+import { MobileNavigation } from './MobileNavigation';
+import { MinimizeButton } from './MinimizeButton';
 import { cn } from '@/lib/utils/cn';
-
-const navigation = [
-  {
-    label: 'Overview',
-    href: '/overview',
-    icon: '/images/icon-nav-overview.svg',
-  },
-  {
-    label: 'Transactions',
-    href: '/transactions',
-    icon: '/images/icon-nav-transactions.svg',
-  },
-  {
-    label: 'Budgets',
-    href: '/budgets',
-    icon: '/images/icon-nav-budgets.svg',
-  },
-  {
-    label: 'Pots',
-    href: '/pots',
-    icon: '/images/icon-nav-pots.svg',
-  },
-  {
-    label: 'Recurring Bills',
-    href: '/recurring',
-    icon: '/images/icon-nav-recurring-bills.svg',
-  },
-];
-
-interface NavigationProps {
-  isMinimized: boolean;
-  onMinimize: () => void;
-}
+import { motion } from 'framer-motion';
+import { NAVIGATION_ITEMS } from '@/constants/navigation';
 
 export function Navigation({ isMinimized, onMinimize }: NavigationProps) {
   return (
     <>
       {/* Desktop navigation */}
-      <aside
+      <motion.aside
         className={cn(
-          'hidden h-full flex-col bg-grey900 transition-all duration-300 md:flex',
-          isMinimized ? 'w-20' : 'w-[300px]'
+          'hidden flex-col rounded-r-[16px] bg-grey900 md:flex',
+          isMinimized ? 'w-[86px]' : 'w-[300px]'
         )}
+        initial={false}
+        animate={{ width: isMinimized ? 86 : 300 }}
+        transition={{
+          type: 'spring',
+          stiffness: 200,
+          damping: 20,
+          duration: 0.75,
+        }}
         aria-label="Navigation"
       >
-        <div className="flex flex-col p-6 ps-0">
+        <div
+          className={cn('flex h-full flex-col p-6 ps-0', isMinimized && 'pe-2')}
+        >
           {/* Logo */}
-          <div className="mb-8">
-            <Image
-              src="/images/logo-large.svg"
-              alt="Finance"
-              width={120}
-              height={22}
-              priority
-              className={cn('ms-6', isMinimized && 'hidden')}
-            />
-            {isMinimized && (
-              <Image
-                src="/images/logo-small.svg"
-                alt="Finance"
-                width={32}
-                height={32}
-                priority
-              />
-            )}
+          <div className="mb-16 h-6 shrink-0">
+            <Logo isMinimized={isMinimized} />
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 space-y-1">
-            {navigation.map((item) => (
-              <NavItem
-                key={item.href}
-                href={item.href}
-                icon={item.icon}
-                label={item.label}
-                isMinimized={isMinimized}
-              />
+          {/* Navigation items */}
+          <nav className="flex-1">
+            {NAVIGATION_ITEMS.map((item) => (
+              <NavItem key={item.href} {...item} isMinimized={isMinimized} />
             ))}
           </nav>
 
           {/* Minimize button */}
-          <button
-            onClick={() => {
-              onMinimize();
-            }}
-            className="mt-auto flex items-center gap-3 rounded-lg px-3 py-2 text-preset-4 text-grey300 transition-colors hover:text-white"
-          >
-            <Image
-              src="/images/icon-minimize-menu.svg"
-              alt="Minimize menu"
-              width={20}
-              height={20}
-              className={cn(
-                'transition-transform',
-                isMinimized && 'rotate-180'
-              )}
-            />
-            {!isMinimized && <span>Minimize Menu</span>}
-          </button>
+          <MinimizeButton isMinimized={isMinimized} onMinimize={onMinimize} />
         </div>
-      </aside>
+      </motion.aside>
 
       {/* Mobile navigation */}
-      <nav
-        className="fixed bottom-0 left-0 right-0 flex h-16 items-center justify-around border-t border-beige500/10 bg-grey900 md:hidden"
-        aria-label="Mobile navigation"
-      >
-        {navigation.map((item) => (
-          <NavItem
-            key={item.href}
-            href={item.href}
-            icon={item.icon}
-            label={item.label}
-            className="flex flex-col items-center gap-1 px-2 py-1 text-[10px]"
-            isMobile
-          />
-        ))}
-      </nav>
+      <MobileNavigation />
     </>
   );
 }
