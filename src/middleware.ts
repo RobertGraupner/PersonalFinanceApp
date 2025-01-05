@@ -28,6 +28,9 @@ export default withAuth(
 
 export const config = {
   matcher: [
+    '/',
+    '/login',
+    '/register',
     '/transactions/:path*',
     '/budgets/:path*',
     '/pots/:path*',
