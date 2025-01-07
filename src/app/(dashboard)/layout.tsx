@@ -25,7 +25,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             'ml-0'
           )}
         >
-          <main className="p-6 pb-20 md:p-8">{children}</main>
+          <main className="mx-auto max-w-[1140px] p-6 pb-20 md:p-8">
+            {children}
+          </main>
         </div>
       </div>
     </div>

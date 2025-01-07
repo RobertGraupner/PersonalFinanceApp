@@ -5,6 +5,7 @@ import { User } from '@/lib/models/User';
 import type { ApiResponse, MoneyOperation } from '@/types/api';
 import type { IPot } from '@/lib/models/Pot';
 import mongoose from 'mongoose';
+import { getAuthSession } from '@/lib/auth/session';
 
 function isValidId(id: string): boolean {
   return mongoose.Types.ObjectId.isValid(id);
@@ -16,6 +17,14 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
     if (!isValidId(params.id)) {
@@ -24,7 +33,10 @@ export async function GET(
       });
     }
 
-    const pot = await Pot.findById(new mongoose.Types.ObjectId(params.id));
+    const pot = await Pot.findOne({
+      _id: new mongoose.Types.ObjectId(params.id),
+      userId: session.user.id,
+    });
 
     if (!pot) {
       return Response.json({ error: 'Pot not found' } as ApiResponse<never>, {
@@ -49,6 +61,14 @@ export async function PUT(
 ) {
   let session;
   try {
+    const userSession = await getAuthSession();
+
+    if (!userSession) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
     // Use session to ensure atomicity of the operation. It's not needed for this operation, but it's a good practice to use it
     session = await mongoose.startSession();
@@ -74,9 +94,11 @@ export async function PUT(
         );
       }
 
-      const pot = await Pot.findById(
-        new mongoose.Types.ObjectId(params.id)
-      ).session(session);
+      const pot = await Pot.findOne({
+        _id: new mongoose.Types.ObjectId(params.id),
+        userId: userSession.user.id,
+      }).session(session);
+
       if (!pot) {
         await session.abortTransaction();
         return Response.json({ error: 'Pot not found' } as ApiResponse<never>, {
@@ -84,7 +106,7 @@ export async function PUT(
         });
       }
 
-      const user = await User.findById(pot.userId).session(session);
+      const user = await User.findById(userSession.user.id).session(session);
       if (!user) {
         await session.abortTransaction();
         return Response.json(
@@ -107,14 +129,17 @@ export async function PUT(
 
         // Withdraw funds from user's balance
         await User.findByIdAndUpdate(
-          pot.userId,
+          userSession.user.id,
           { $inc: { 'balance.current': -amount } },
           { session }
         );
 
         // Add funds to pot
-        await Pot.findByIdAndUpdate(
-          new mongoose.Types.ObjectId(params.id),
+        await Pot.findOneAndUpdate(
+          {
+            _id: new mongoose.Types.ObjectId(params.id),
+            userId: userSession.user.id,
+          },
           { $inc: { total: amount } },
           { session }
         );
@@ -130,14 +155,17 @@ export async function PUT(
 
         // Add funds to user's balance
         await User.findByIdAndUpdate(
-          pot.userId,
+          userSession.user.id,
           { $inc: { 'balance.current': amount } },
           { session }
         );
 
         // Withdraw funds from pot
         await Pot.findByIdAndUpdate(
-          new mongoose.Types.ObjectId(params.id),
+          {
+            _id: new mongoose.Types.ObjectId(params.id),
+            userId: userSession.user.id,
+          },
           { $inc: { total: -amount } },
           { session }
         );
@@ -146,8 +174,11 @@ export async function PUT(
       await session.commitTransaction();
     } else {
       // Regular pot update
-      const updatedPot = await Pot.findByIdAndUpdate(
-        new mongoose.Types.ObjectId(params.id),
+      const updatedPot = await Pot.findOneAndUpdate(
+        {
+          _id: new mongoose.Types.ObjectId(params.id),
+          userId: userSession.user.id,
+        },
         body,
         { new: true }
       );
@@ -159,9 +190,10 @@ export async function PUT(
       return Response.json({ data: updatedPot } as ApiResponse<IPot>);
     }
 
-    const updatedPot = await Pot.findById(
-      new mongoose.Types.ObjectId(params.id)
-    );
+    const updatedPot = await Pot.findOne({
+      _id: new mongoose.Types.ObjectId(params.id),
+      userId: userSession.user.id,
+    });
 
     return Response.json({ data: updatedPot } as ApiResponse<IPot>);
   } catch (error) {
@@ -184,6 +216,14 @@ export async function DELETE(
 ) {
   let session;
   try {
+    const userSession = await getAuthSession();
+
+    if (!userSession) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
     session = await mongoose.startSession();
@@ -195,9 +235,11 @@ export async function DELETE(
       });
     }
 
-    const pot = await Pot.findById(
-      new mongoose.Types.ObjectId(params.id)
-    ).session(session);
+    const pot = await Pot.findOne({
+      _id: new mongoose.Types.ObjectId(params.id),
+      userId: userSession.user.id,
+    }).session(session);
+
     if (!pot) {
       await session.abortTransaction();
       return Response.json({ error: 'Pot not found' } as ApiResponse<never>, {
@@ -207,7 +249,7 @@ export async function DELETE(
 
     // Return funds to user's balance
     await User.findByIdAndUpdate(
-      pot.userId,
+      userSession.user.id,
       { $inc: { 'balance.current': pot.total } },
       { session }
     );

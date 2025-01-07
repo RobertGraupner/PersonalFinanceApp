@@ -8,7 +8,8 @@ import { MinimizeButton } from './MinimizeButton';
 import { cn } from '@/lib/utils/cn';
 import { motion } from 'framer-motion';
 import { NAVIGATION_ITEMS } from '@/constants/navigation';
-
+import { signOut } from 'next-auth/react';
+import { LogOut } from 'lucide-react';
 export function Navigation({ isMinimized, onMinimize }: NavigationProps) {
   return (
     <>
@@ -45,6 +46,24 @@ export function Navigation({ isMinimized, onMinimize }: NavigationProps) {
 
           {/* Minimize button */}
           <MinimizeButton isMinimized={isMinimized} onMinimize={onMinimize} />
+
+          <button
+            onClick={() =>
+              signOut({
+                callbackUrl: '/login',
+                redirect: true,
+              })
+            }
+            className={cn(
+              'flex w-fit items-center gap-4 rounded-lg ps-8 text-grey300 transition-colors',
+              isMinimized && 'justify-center px-2'
+            )}
+          >
+            <LogOut className="h-6 w-6 shrink-0" />
+            {!isMinimized && (
+              <span className="text-preset-3 hover:text-white">Logout</span>
+            )}
+          </button>
         </div>
       </motion.aside>
 

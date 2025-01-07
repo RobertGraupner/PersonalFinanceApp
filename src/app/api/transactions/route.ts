@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { connectDB } from '@/lib/db/db';
+import { getAuthSession } from '@/lib/auth/session';
 import { Transaction } from '@/lib/models/Transaction';
 import type { ITransaction } from '@/lib/models/Transaction';
 import type {
@@ -11,6 +12,14 @@ import type {
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
     // Get query params from request
@@ -26,7 +35,9 @@ export async function GET(request: NextRequest) {
         : undefined,
     };
 
-    const query: TransactionQuery = {};
+    const query: TransactionQuery = {
+      userId: session.user.id,
+    };
 
     if (params.category) {
       query.category = params.category;
@@ -92,11 +103,23 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
+
     const body: Omit<ITransaction, '_id' | 'createdAt' | 'updatedAt'> =
       await request.json();
 
-    const transaction = await Transaction.create(body);
+    const transaction = await Transaction.create({
+      ...body,
+      userId: session.user.id,
+    });
 
     const response: ApiResponse<ITransaction> = {
       data: transaction,

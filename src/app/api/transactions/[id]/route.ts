@@ -4,7 +4,7 @@ import { Transaction } from '@/lib/models/Transaction';
 import type { ITransaction } from '@/lib/models/Transaction';
 import type { ApiResponse } from '@/types/api';
 import mongoose from 'mongoose';
-
+import { getAuthSession } from '@/lib/auth/session';
 // helper function to check if the id is valid
 function isValidId(id: string): boolean {
   return mongoose.Types.ObjectId.isValid(id);
@@ -16,6 +16,14 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
     if (!isValidId(params.id)) {
@@ -26,7 +34,10 @@ export async function GET(
     }
 
     // We have to use new mongoose.Types.ObjectId(params.id) to convert the id to a valid mongoose object id
-    const transaction = await Transaction.findById(new mongoose.Types.ObjectId(params.id));
+    const transaction = await Transaction.findOne({
+      _id: new mongoose.Types.ObjectId(params.id),
+      userId: session.user.id,
+    });
 
     if (!transaction) {
       return Response.json(
@@ -36,7 +47,7 @@ export async function GET(
     }
 
     const response: ApiResponse<ITransaction> = {
-      data: transaction
+      data: transaction,
     };
 
     return Response.json(response);
@@ -44,7 +55,7 @@ export async function GET(
     console.error('Error fetching transaction:', error);
 
     const errorResponse: ApiResponse<never> = {
-      error: 'An error occurred while fetching the transaction'
+      error: 'An error occurred while fetching the transaction',
     };
 
     return Response.json(errorResponse, { status: 500 });
@@ -57,6 +68,14 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
     if (!isValidId(params.id)) {
@@ -68,8 +87,11 @@ export async function PUT(
 
     const body: Partial<ITransaction> = await request.json();
 
-    const transaction = await Transaction.findByIdAndUpdate(
-      new mongoose.Types.ObjectId(params.id),
+    const transaction = await Transaction.findOneAndUpdate(
+      {
+        _id: new mongoose.Types.ObjectId(params.id),
+        userId: session.user.id,
+      },
       { $set: body },
       { new: true }
     );
@@ -82,7 +104,7 @@ export async function PUT(
     }
 
     const response: ApiResponse<ITransaction> = {
-      data: transaction
+      data: transaction,
     };
 
     return Response.json(response);
@@ -90,7 +112,7 @@ export async function PUT(
     console.error('Error updating transaction:', error);
 
     const errorResponse: ApiResponse<never> = {
-      error: 'An error occurred while updating the transaction'
+      error: 'An error occurred while updating the transaction',
     };
 
     return Response.json(errorResponse, { status: 500 });
@@ -103,6 +125,14 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
     if (!isValidId(params.id)) {
@@ -112,7 +142,10 @@ export async function DELETE(
       );
     }
 
-    const transaction = await Transaction.findByIdAndDelete(new mongoose.Types.ObjectId(params.id));
+    const transaction = await Transaction.findOneAndDelete({
+      _id: new mongoose.Types.ObjectId(params.id),
+      userId: session.user.id,
+    });
 
     if (!transaction) {
       return Response.json(
@@ -126,7 +159,7 @@ export async function DELETE(
     console.error('Error deleting transaction:', error);
 
     const errorResponse: ApiResponse<never> = {
-      error: 'An error occurred while deleting the transaction'
+      error: 'An error occurred while deleting the transaction',
     };
 
     return Response.json(errorResponse, { status: 500 });

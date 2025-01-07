@@ -3,12 +3,21 @@ import { connectDB } from '@/lib/db/db';
 import { Budget } from '@/lib/models/Budget';
 import type { IBudget } from '@/lib/models/Budget';
 import type { ApiResponse } from '@/types/api';
+import { getAuthSession } from '@/lib/auth/session';
 
 export async function GET() {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
-    const budgets = await Budget.find();
+    const budgets = await Budget.find({ userId: session.user.id });
 
     const response: ApiResponse<IBudget[]> = {
       data: budgets,
@@ -28,11 +37,20 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
+
     const body: Omit<IBudget, '_id' | 'createdAt' | 'updatedAt'> =
       await request.json();
 
-    const budget = await Budget.create(body);
+    const budget = await Budget.create({ ...body, userId: session.user.id });
 
     const response: ApiResponse<IBudget> = {
       data: budget,

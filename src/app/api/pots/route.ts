@@ -3,12 +3,21 @@ import { connectDB } from '@/lib/db/db';
 import { Pot } from '@/lib/models/Pot';
 import type { IPot } from '@/lib/models/Pot';
 import type { ApiResponse } from '@/types/api';
+import { getAuthSession } from '@/lib/auth/session';
 
 export async function GET() {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
-    const pots = await Pot.find();
+    const pots = await Pot.find({ userId: session.user.id });
 
     const response: ApiResponse<IPot[]> = {
       data: pots,
@@ -26,11 +35,19 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
     const body: Omit<IPot, '_id' | 'createdAt' | 'updatedAt'> =
       await request.json();
 
-    const pot = await Pot.create(body);
+    const pot = await Pot.create({ ...body, userId: session.user.id });
 
     const response: ApiResponse<IPot> = {
       data: pot,

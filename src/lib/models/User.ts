@@ -1,51 +1,57 @@
 import mongoose, { Model } from 'mongoose';
 
+export interface IUserBalance {
+  current: number;
+  income: number;
+  expenses: number;
+}
+
 export interface IUser {
   email: string;
   password: string;
   name: string;
-  balance: {
-    current: number;
-    income: number;
-    expenses: number;
-  };
+  balance: IUserBalance;
 }
 
-const userSchema = new mongoose.Schema<IUser>({
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  name: {
-    type: String,
-    required: true
-  },
-  balance: {
-    current: {
-      type: Number,
+const userSchema = new mongoose.Schema<IUser>(
+  {
+    email: {
+      type: String,
       required: true,
-      default: 0
+      unique: true,
     },
-    income: {
-      type: Number,
+    password: {
+      type: String,
       required: true,
-      default: 0
     },
-    expenses: {
-      type: Number,
+    name: {
+      type: String,
       required: true,
-      default: 0
-    }
+    },
+    balance: {
+      current: {
+        type: Number,
+        required: true,
+        default: 0,
+      },
+      income: {
+        type: Number,
+        required: true,
+        default: 0,
+      },
+      expenses: {
+        type: Number,
+        required: true,
+        default: 0,
+      },
+    },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
   }
-}, {
-  timestamps: true,
-  versionKey: false
-});
+);
 
-export const User = (mongoose.models.User as Model<IUser>) || 
+export const User =
+  (mongoose.models.User as Model<IUser>) ||
   mongoose.model<IUser>('User', userSchema);

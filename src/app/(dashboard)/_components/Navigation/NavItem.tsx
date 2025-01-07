@@ -21,7 +21,7 @@ export function NavItem({
       <Link
         href={href}
         className={cn(
-          'xs:h-[66px] xs:w-28 relative flex h-[44px] w-16 flex-col items-center gap-2 rounded-t-[8px] pt-2 text-preset-3 transition-colors',
+          'relative flex h-[44px] w-16 flex-col items-center gap-2 rounded-t-[8px] pt-2 text-preset-3 transition-colors xs:h-[66px] xs:w-28',
           isActive
             ? 'bg-beige100 text-grey900'
             : 'text-grey300 hover:text-white',
@@ -43,7 +43,7 @@ export function NavItem({
             }}
           />
         </div>
-        <span className="xs:block hidden text-nowrap text-preset-5 font-bold">
+        <span className="hidden text-nowrap text-preset-5 font-bold xs:block">
           {label}
         </span>
       </Link>
@@ -54,7 +54,7 @@ export function NavItem({
     <Link
       href={href}
       className={cn(
-        'relative flex h-14 items-center gap-4 rounded-r-[12px] ps-8 text-preset-3 transition-colors',
+        'relative flex h-14 items-center gap-4 rounded-r-xl ps-8 text-preset-3 transition-colors',
         isActive ? 'bg-beige100 text-grey900' : 'text-grey300 hover:text-white',
         isMinimized && 'px-6',
         className

@@ -9,7 +9,7 @@ import data from '@/data/example_data.json';
 
 async function seed() {
   loadEnvConfig(process.cwd());
-  
+
   try {
     if (!process.env.MONGODB_URI) {
       throw new Error('MONGODB_URI is not defined');
@@ -27,7 +27,7 @@ async function seed() {
     console.log('🧹 Cleared old data');
 
     // Create a test user
-    const hashedPassword = await bcrypt.hash('test123', 10);
+    const hashedPassword = await bcrypt.hash('Password123$', 10);
     const user = await User.create({
       email: 'test@example.com',
       password: hashedPassword,
@@ -35,38 +35,38 @@ async function seed() {
       balance: {
         current: data.balance.current,
         income: data.balance.income,
-        expenses: data.balance.expenses
-      }
+        expenses: data.balance.expenses,
+      },
     });
     console.log('👤 Created test user');
 
     // Add transactions
-    const transactions = data.transactions.map(transaction => ({
+    const transactions = data.transactions.map((transaction) => ({
       ...transaction,
       userId: user._id.toString(),
-      date: new Date(transaction.date)
+      date: new Date(transaction.date),
     }));
     await Transaction.insertMany(transactions);
     console.log(`💰 Added ${transactions.length} transactions`);
 
     // Add budgets
-    const budgets = data.budgets.map(budget => ({
+    const budgets = data.budgets.map((budget) => ({
       ...budget,
       userId: user._id.toString(),
-      maximum: Number(budget.maximum)
+      maximum: Number(budget.maximum),
     }));
     await Budget.insertMany(budgets);
     console.log(`📊 Added ${budgets.length} budgets`);
 
     // Add savings goals
-    const pots = data.pots.map(pot => ({
+    const pots = data.pots.map((pot) => ({
       ...pot,
       userId: user._id.toString(),
       target: Number(pot.target),
-      total: Number(pot.total)
+      total: Number(pot.total),
     }));
     await Pot.insertMany(pots);
-    
+
     console.log(`🏺 Added ${pots.length} savings goals`);
 
     console.log('✨ Successfully seeded data!');

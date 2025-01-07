@@ -8,6 +8,7 @@ export interface QueryParams {
 }
 
 export interface TransactionQuery {
+  userId: string;
   category?: string;
   name?: { $regex: string; $options: string };
   recurring?: boolean;

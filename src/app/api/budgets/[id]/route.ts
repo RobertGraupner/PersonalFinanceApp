@@ -4,6 +4,7 @@ import { Budget } from '@/lib/models/Budget';
 import type { IBudget } from '@/lib/models/Budget';
 import type { ApiResponse } from '@/types/api';
 import mongoose from 'mongoose';
+import { getAuthSession } from '@/lib/auth/session';
 
 function isValidId(id: string): boolean {
   return mongoose.Types.ObjectId.isValid(id);
@@ -14,6 +15,14 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
     if (!isValidId(params.id)) {
@@ -23,9 +32,10 @@ export async function GET(
       );
     }
 
-    const budget = await Budget.findById(
-      new mongoose.Types.ObjectId(params.id)
-    );
+    const budget = await Budget.findOne({
+      _id: new mongoose.Types.ObjectId(params.id),
+      userId: session.user.id,
+    });
 
     if (!budget) {
       return Response.json(
@@ -55,6 +65,14 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
     if (!isValidId(params.id)) {
@@ -66,8 +84,11 @@ export async function PUT(
 
     const body: Partial<IBudget> = await request.json();
 
-    const budget = await Budget.findByIdAndUpdate(
-      new mongoose.Types.ObjectId(params.id),
+    const budget = await Budget.findOneAndUpdate(
+      {
+        _id: new mongoose.Types.ObjectId(params.id),
+        userId: session.user.id,
+      },
       { $set: body },
       { new: true }
     );
@@ -100,6 +121,14 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getAuthSession();
+
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
+        status: 401,
+      });
+    }
+
     await connectDB();
 
     if (!isValidId(params.id)) {
@@ -109,9 +138,10 @@ export async function DELETE(
       );
     }
 
-    const budget = await Budget.findByIdAndDelete(
-      new mongoose.Types.ObjectId(params.id)
-    );
+    const budget = await Budget.findOneAndDelete({
+      _id: new mongoose.Types.ObjectId(params.id),
+      userId: session.user.id,
+    });
 
     if (!budget) {
       return Response.json(
