@@ -6,24 +6,26 @@ export function PotsList({ pots }: PotsListProps) {
   const totalSaved = pots.reduce((sum, pot) => sum + pot.total, 0);
 
   return (
-    <Card title="Pots" linkHref="/pots">
-      <div className="flex gap-6">
+    <Card title="Pots" linkHref="/pots" linkText="See details">
+      <div className="flex flex-col gap-6 md:flex-row">
         {/* Total Saved */}
-        <div className="flex-shrink-0 space-y-2 rounded-lg bg-beige100 p-4">
-          <div className="flex items-center gap-2">
+        <div className="flex w-full min-w-40 items-center justify-start gap-4 rounded-lg bg-beige100 p-4 md:w-2/5">
+          <div className="flex flex-shrink-0 items-center justify-center">
             <Image
-              src="/icons/dollar.svg"
+              src="/images/icon-pot.svg"
               alt="Dollar"
-              width={20}
-              height={20}
+              width={27}
+              height={35}
             />
-            <span className="text-sm text-grey500">Total Saved</span>
           </div>
-          <p className="text-2xl font-bold">${totalSaved}</p>
+          <div className="flex flex-col gap-3">
+            <p className="text-preset-4 text-grey500">Total Saved</p>
+            <p className="text-preset-1 text-grey900">${totalSaved}</p>
+          </div>
         </div>
 
         {/* Pots List */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid w-full grid-cols-2 gap-4 md:w-3/5">
           {pots.map((pot) => (
             <div
               key={pot._id}
@@ -31,12 +33,14 @@ export function PotsList({ pots }: PotsListProps) {
               style={{ color: pot.theme }}
             >
               <div
-                className="h-4 w-1 rounded-full"
+                className="h-full w-1 shrink-0 rounded-full"
                 style={{ backgroundColor: pot.theme }}
               />
-              <div>
-                <p className="text-sm">{pot.name}</p>
-                <p className="font-bold">${pot.total}</p>
+              <div className="flex flex-col gap-1">
+                <p className="text-preset-5 text-grey500">{pot.name}</p>
+                <p className="text-preset-4 font-bold text-grey900">
+                  ${pot.total}
+                </p>
               </div>
             </div>
           ))}

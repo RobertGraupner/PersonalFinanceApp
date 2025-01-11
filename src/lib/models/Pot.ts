@@ -1,6 +1,7 @@
 import mongoose, { Model } from 'mongoose';
 
 export interface IPot {
+  _id?: string;
   userId: string;
   name: string;
   target: number;
@@ -8,35 +9,39 @@ export interface IPot {
   theme: string;
 }
 
-const potSchema = new mongoose.Schema<IPot>({
-  userId: {
-    type: String,
-    required: true,
-    ref: 'User'
+const potSchema = new mongoose.Schema<IPot>(
+  {
+    userId: {
+      type: String,
+      required: true,
+      ref: 'User',
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    target: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    total: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
+    },
+    theme: {
+      type: String,
+      required: true,
+    },
   },
-  name: {
-    type: String,
-    required: true
-  },
-  target: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  total: {
-    type: Number,
-    required: true,
-    default: 0,
-    min: 0
-  },
-  theme: {
-    type: String,
-    required: true
+  {
+    timestamps: true,
+    versionKey: false,
   }
-}, {
-  timestamps: true,
-  versionKey: false
-});
+);
 
-export const Pot = (mongoose.models.Pot as Model<IPot>) || 
+export const Pot =
+  (mongoose.models.Pot as Model<IPot>) ||
   mongoose.model<IPot>('Pot', potSchema);

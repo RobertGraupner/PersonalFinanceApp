@@ -27,7 +27,7 @@ export function Navigation({ isMinimized, onMinimize }: NavigationProps) {
           damping: 20,
           duration: 0.75,
         }}
-        aria-label="Navigation"
+        aria-label="Main navigation"
       >
         <div
           className={cn('flex h-full flex-col p-6 ps-0', isMinimized && 'pe-2')}
@@ -45,7 +45,14 @@ export function Navigation({ isMinimized, onMinimize }: NavigationProps) {
           </nav>
 
           {/* Minimize button */}
-          <MinimizeButton isMinimized={isMinimized} onMinimize={onMinimize} />
+          <MinimizeButton
+            isMinimized={isMinimized}
+            onMinimize={onMinimize}
+            aria-expanded={!isMinimized}
+            aria-label={
+              isMinimized ? 'Expand navigation' : 'Minimize navigation'
+            }
+          />
 
           <button
             onClick={() =>
@@ -58,8 +65,9 @@ export function Navigation({ isMinimized, onMinimize }: NavigationProps) {
               'flex w-fit items-center gap-4 rounded-lg ps-8 text-grey300 transition-colors',
               isMinimized && 'justify-center px-2'
             )}
+            aria-label="Logout"
           >
-            <LogOut className="h-6 w-6 shrink-0" />
+            <LogOut className="h-6 w-6 shrink-0" aria-hidden="true" />
             {!isMinimized && (
               <span className="text-preset-3 hover:text-white">Logout</span>
             )}

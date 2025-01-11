@@ -31,6 +31,7 @@ export function ErrorPage({
           <Link
             href="/overview"
             className="inline-flex items-center justify-center rounded-lg bg-grey900 px-6 py-3 text-preset-4 font-bold text-white transition-colors hover:bg-grey900/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beige500 focus-visible:ring-offset-2"
+            aria-label="Return to overview page"
           >
             Return to Financial Safety
           </Link>

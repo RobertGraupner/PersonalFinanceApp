@@ -38,7 +38,7 @@ export default function LoginForm() {
         return;
       }
 
-      router.push('/transactions');
+      router.push('/overview');
     } catch (error) {
       setError('An error occurred during login:' + error);
     }
@@ -52,7 +52,12 @@ export default function LoginForm() {
     <div className="space-y-8">
       <h1 className="text-preset-1 text-grey900">Login</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        className="space-y-6"
+        aria-label="Login form"
+      >
         <div className="space-y-[16px]">
           <div className="relative">
             <label

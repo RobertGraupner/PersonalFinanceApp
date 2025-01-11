@@ -1,16 +1,25 @@
 import { CardProps } from '@/types/overview';
 import Link from 'next/link';
-
-export function Card({ title, linkHref, children }: CardProps) {
+import Image from 'next/image';
+export function Card({ title, linkHref, linkText, children }: CardProps) {
   return (
     <div className="rounded-xl bg-white p-6">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-preset-2">{title}</h2>
         <Link
           href={linkHref}
-          className="text-preset-4 text-grey500 hover:text-grey900"
+          className="flex gap-3 text-preset-4 text-grey500 hover:text-grey900"
+          aria-label={`${linkText} for ${title}`}
         >
-          See Details
+          {linkText}
+          <Image
+            src="/images/icon-caret-right.svg"
+            alt="Arrow Right"
+            width={5}
+            height={10}
+            className="mb-0.5"
+            aria-hidden="true"
+          />
         </Link>
       </div>
       {children}

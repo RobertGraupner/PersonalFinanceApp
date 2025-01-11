@@ -17,9 +17,14 @@ export interface StatsCardsProps {
 export interface CardProps {
   title: string;
   linkHref: string;
+  linkText: string;
   children: React.ReactNode;
 }
 
 export interface PotsListProps {
   pots: IPot[];
+}
+
+export interface TransactionsListProps {
+  transactions: ITransaction[];
 }

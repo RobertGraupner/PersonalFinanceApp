@@ -3,7 +3,7 @@ import { StatsCardsProps } from '@/types/overview';
 
 export function StatsCards({ stats }: StatsCardsProps) {
   return (
-    <div className="grid gap-6 md:grid-cols-3">
+    <div className="grid gap-6 lg:grid-cols-3">
       {/* Current Balance */}
       <div className="flex flex-col gap-3 rounded-xl bg-grey900 p-6 text-white">
         <p className="text-preset-4">Current Balance</p>

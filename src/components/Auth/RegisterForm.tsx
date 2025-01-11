@@ -66,7 +66,12 @@ export default function RegisterForm() {
     <div className="space-y-8">
       <h1 className="text-preset-1 text-grey900">Sign up</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        className="space-y-6"
+        aria-label="Register form"
+      >
         <div className="space-y-[16px]">
           <div className="relative">
             <label
