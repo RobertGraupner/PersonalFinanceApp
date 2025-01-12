@@ -1,3 +1,7 @@
+'use client';
+
+import { EmptyDataPage } from '@/components/Ui/EmptyDataPage';
+
 export default function BudgetsPage() {
-  return <div>Budgets</div>;
+  return <EmptyDataPage viewType="budgets" />;
 }

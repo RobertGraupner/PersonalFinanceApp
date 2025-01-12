@@ -14,6 +14,12 @@ export interface StatsCardsProps {
   stats: IUserBalance;
 }
 
+export interface OverviewStats {
+  balance: number;
+  income: number;
+  expenses: number;
+}
+
 export interface CardProps {
   title: string;
   linkHref: string;
@@ -23,6 +29,10 @@ export interface CardProps {
 
 export interface PotsListProps {
   pots: IPot[];
+}
+
+export interface BudgetDiagramProps {
+  budgets: IBudget[];
 }
 
 export interface TransactionsListProps {

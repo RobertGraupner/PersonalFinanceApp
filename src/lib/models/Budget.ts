@@ -2,6 +2,7 @@ import mongoose, { Model } from 'mongoose';
 import { TransactionCategory } from './Transaction';
 
 export interface IBudget {
+  _id: string;
   userId: string;
   category: TransactionCategory;
   maximum: number;

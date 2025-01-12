@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [isMinimized, setIsMinimized] = useState(false);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-beige100">
+    <div className="h-full overflow-x-hidden bg-beige100">
       <div className="flex min-h-screen">
         {/* Navigation */}
         <Navigation
@@ -25,7 +25,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             'ml-0'
           )}
         >
-          <main className="mx-auto max-w-[1140px] p-6 pb-20 md:p-8">
+          <main className="mx-auto h-full max-w-[1140px] p-6 pb-20 md:p-8">
             {children}
           </main>
         </div>

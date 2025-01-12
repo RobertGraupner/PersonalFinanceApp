@@ -1,4 +1,5 @@
 import { Card } from './Card';
+import { ColorBar } from '@/components/Ui/ColorBar';
 import { PotsListProps } from '@/types/overview';
 import Image from 'next/image';
 
@@ -27,22 +28,12 @@ export function PotsList({ pots }: PotsListProps) {
         {/* Pots List */}
         <div className="grid w-full grid-cols-2 gap-4 md:w-3/5">
           {pots.map((pot) => (
-            <div
+            <ColorBar
               key={pot._id}
-              className="flex items-center gap-2"
-              style={{ color: pot.theme }}
-            >
-              <div
-                className="h-full w-1 shrink-0 rounded-full"
-                style={{ backgroundColor: pot.theme }}
-              />
-              <div className="flex flex-col gap-1">
-                <p className="text-preset-5 text-grey500">{pot.name}</p>
-                <p className="text-preset-4 font-bold text-grey900">
-                  ${pot.total}
-                </p>
-              </div>
-            </div>
+              color={pot.theme}
+              label={pot.name}
+              value={pot.total}
+            />
           ))}
         </div>
       </div>

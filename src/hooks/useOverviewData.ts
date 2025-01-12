@@ -12,7 +12,7 @@ export function useOverviewData() {
     queryFn: async () => {
       const [transactionsRes, budgetsRes, potsRes, userRes] = await Promise.all(
         [
-          fetch(`/api/transactions?limit=5&sort=latest`),
+          fetch(`/api/transactions`),
           fetch(`/api/budgets`),
           fetch(`/api/pots`),
           fetch(`/api/user`),

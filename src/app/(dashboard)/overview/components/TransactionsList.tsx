@@ -5,14 +5,14 @@ import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils/cn';
 export function TransactionsList({ transactions }: TransactionsListProps) {
+  const latestTransactions = transactions
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5);
+
   return (
-    <Card
-      title="Latest Transactions"
-      linkHref="/transactions"
-      linkText="View All"
-    >
+    <Card title="Transactions" linkHref="/transactions" linkText="View All">
       <>
-        {transactions.map((transaction) => (
+        {latestTransactions.map((transaction) => (
           <div
             key={transaction._id}
             className="border-b border-grey100 last:border-b-0"
