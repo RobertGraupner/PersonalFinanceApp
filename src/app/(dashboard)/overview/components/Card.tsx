@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 export function Card({ title, linkHref, linkText, children }: CardProps) {
   return (
-    <div className="rounded-xl bg-white p-6">
+    <div className="flex flex-col justify-between rounded-xl bg-white p-6">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-preset-2">{title}</h2>
         <Link

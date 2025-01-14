@@ -1,3 +1,6 @@
+import type { ITransaction } from '@/lib/models/Transaction';
+import type { TransactionCategory } from '@/lib/models/Transaction';
+
 export interface QueryParams {
   page: number;
   limit: number;
@@ -5,6 +8,9 @@ export interface QueryParams {
   search?: string;
   sort?: 'latest' | 'oldest' | 'a-z' | 'z-a' | 'highest' | 'lowest';
   recurring?: boolean;
+  startDate?: string;
+  endDate?: string;
+  aggregate?: boolean;
 }
 
 export interface TransactionQuery {
@@ -12,6 +18,10 @@ export interface TransactionQuery {
   category?: string;
   name?: { $regex: string; $options: string };
   recurring?: boolean;
+  date?: {
+    $gte: Date;
+    $lte: Date;
+  };
 }
 
 export interface SortQuery {
@@ -35,3 +45,12 @@ export interface MoneyOperation {
   amount: number;
   operation: 'add' | 'withdraw';
 }
+
+export interface CategorySpentData {
+  spent: number;
+  transactions: ITransaction[];
+}
+
+export type CategorySpent = Partial<
+  Record<TransactionCategory, CategorySpentData>
+>;

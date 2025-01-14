@@ -33,11 +33,22 @@ export async function GET(request: NextRequest) {
       recurring: searchParams.has('recurring')
         ? searchParams.get('recurring') === 'true'
         : undefined,
+      startDate: searchParams.get('startDate') || undefined,
+      endDate: searchParams.get('endDate') || undefined,
+      aggregate: searchParams.get('aggregate') === 'true',
     };
 
     const query: TransactionQuery = {
       userId: session.user.id,
     };
+
+    // Add date range if provided
+    if (params.startDate && params.endDate) {
+      query.date = {
+        $gte: new Date(params.startDate),
+        $lte: new Date(params.endDate),
+      };
+    }
 
     if (params.category) {
       query.category = params.category;
@@ -49,6 +60,51 @@ export async function GET(request: NextRequest) {
 
     if (params.recurring !== undefined) {
       query.recurring = params.recurring;
+    }
+
+    // Aggregate transactions if requested
+    if (params.aggregate) {
+      const aggregation = await Transaction.aggregate([
+        { $match: query },
+        {
+          $group: {
+            _id: '$category',
+            spent: {
+              $sum: {
+                $cond: [{ $lt: ['$amount', 0] }, { $abs: '$amount' }, 0],
+              },
+            },
+            transactions: {
+              $push: {
+                _id: '$_id',
+                name: '$name',
+                amount: '$amount',
+                date: '$date',
+                avatar: '$avatar',
+                category: '$category',
+                recurring: '$recurring',
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            category: '$_id',
+            spent: 1,
+            transactions: { $slice: ['$transactions', 3] },
+          },
+        },
+      ]);
+
+      return Response.json({
+        data: Object.fromEntries(
+          aggregation.map(({ category, spent, transactions }) => [
+            category,
+            { spent, transactions },
+          ])
+        ),
+      });
     }
 
     let sortQuery: SortQuery = {};

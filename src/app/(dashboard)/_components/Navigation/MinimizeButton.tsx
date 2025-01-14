@@ -9,7 +9,7 @@ export function MinimizeButton({
   return (
     <button
       onClick={onMinimize}
-      className="mb-28 mt-auto flex h-14 w-fit items-center gap-4 text-nowrap rounded-lg ps-8 text-preset-3 text-grey300 transition-colors hover:text-white"
+      className="mt-16 flex h-14 w-fit items-center gap-4 text-nowrap rounded-lg ps-8 text-preset-3 text-grey300 transition-colors hover:text-white"
     >
       <motion.div
         animate={{ rotate: isMinimized ? 180 : 0 }}

@@ -1,6 +1,7 @@
 import { Card } from './Card';
 import { ColorBar } from '@/components/Ui/ColorBar';
 import { PotsListProps } from '@/types/overview';
+import { formatCurrency } from '@/lib/utils/formatCurrency';
 import Image from 'next/image';
 
 export function PotsList({ pots }: PotsListProps) {
@@ -19,9 +20,11 @@ export function PotsList({ pots }: PotsListProps) {
               height={35}
             />
           </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex min-w-0 flex-col gap-3">
             <p className="text-preset-4 text-grey500">Total Saved</p>
-            <p className="text-preset-1 text-grey900">${totalSaved}</p>
+            <p className="break-words text-preset-1 text-grey900">
+              {formatCurrency(totalSaved)}
+            </p>
           </div>
         </div>
 

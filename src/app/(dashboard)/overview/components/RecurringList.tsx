@@ -1,28 +1,20 @@
 import { useMemo } from 'react';
 import { Card } from './Card';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
-import { ITransaction } from '@/lib/models/Transaction';
+import { RecurringListProps } from '@/types/overview';
 
-interface RecurringListProps {
-  transactions: ITransaction[];
-}
-
-export function RecurringList({ transactions }: RecurringListProps) {
+export function RecurringList({ recurring }: RecurringListProps) {
   const stats = useMemo(() => {
-    const recurringTransactions = transactions.filter((t) => t.recurring);
-    console.log(recurringTransactions);
-    console.log(transactions);
-
     return {
-      paidBills: recurringTransactions
+      paidBills: recurring
         .filter((t) => new Date(t.date) < new Date())
         .reduce((sum, t) => sum + Math.abs(t.amount), 0),
 
-      totalUpcoming: recurringTransactions
+      totalUpcoming: recurring
         .filter((t) => new Date(t.date) > new Date())
         .reduce((sum, t) => sum + Math.abs(t.amount), 0),
 
-      dueSoon: recurringTransactions
+      dueSoon: recurring
         .filter((t) => {
           const transactionDate = new Date(t.date);
           const nextWeek = new Date();
@@ -31,23 +23,23 @@ export function RecurringList({ transactions }: RecurringListProps) {
         })
         .reduce((sum, t) => sum + Math.abs(t.amount), 0),
     };
-  }, [transactions]);
+  }, [recurring]);
 
   const items = [
     {
       label: 'Paid Bills',
       value: stats.paidBills,
-      color: '#277C78', // zielony
+      color: '#277C78',
     },
     {
       label: 'Total Upcoming',
       value: stats.totalUpcoming,
-      color: '#BE6C49', // pomarańczowy
+      color: '#F2CDAC',
     },
     {
       label: 'Due Soon',
       value: stats.dueSoon,
-      color: '#82C9D7', // turkusowy
+      color: '#82C9D7',
     },
   ];
 
@@ -57,18 +49,15 @@ export function RecurringList({ transactions }: RecurringListProps) {
         {items.map((item) => (
           <div
             key={item.label}
-            className="flex items-center justify-between rounded-lg bg-beige100 p-4"
+            className="rounded-l-lg rounded-r-3xl"
+            style={{ backgroundColor: item.color }}
           >
-            <div className="flex items-center gap-2">
-              <div
-                className="h-4 w-1 rounded-sm"
-                style={{ backgroundColor: item.color }}
-              />
+            <div className="ml-1 flex items-center justify-between rounded-lg bg-beige100 p-4">
               <span className="text-preset-4 text-grey500">{item.label}</span>
+              <span className="text-preset-4 font-bold text-grey900">
+                {formatCurrency(item.value)}
+              </span>
             </div>
-            <span className="text-preset-4 font-bold text-grey900">
-              {formatCurrency(item.value)}
-            </span>
           </div>
         ))}
       </div>

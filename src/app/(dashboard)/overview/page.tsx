@@ -28,14 +28,14 @@ export default function OverviewPage() {
   return (
     <div className="space-y-6">
       <StatsCards stats={data.stats} />
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="grid auto-rows-min gap-6 lg:col-span-3">
+      <div className="grid gap-6 xl:grid-cols-5">
+        <div className="grid w-full auto-rows-min gap-6 xl:col-span-3">
           <PotsList pots={data.pots} />
           <TransactionsList transactions={data.transactions} />
         </div>
-        <div className="grid auto-rows-[1fr_auto] gap-6 lg:col-span-2">
-          <BudgetDiagram budgets={data.budgets} />
-          <RecurringList transactions={data.transactions} />
+        <div className="grid auto-rows-[1fr_auto] gap-6 xl:col-span-2">
+          <BudgetDiagram budgets={data.budgets} spent={data.spent} />
+          <RecurringList recurring={data.recurring} />
         </div>
       </div>
     </div>
