@@ -16,7 +16,7 @@ export function Navigation({ isMinimized, onMinimize }: NavigationProps) {
       {/* Desktop navigation */}
       <motion.aside
         className={cn(
-          'hidden flex-col rounded-r-[16px] bg-grey900 md:flex',
+          'hidden flex-shrink-0 flex-col rounded-r-[16px] bg-grey900 md:flex',
           isMinimized ? 'w-[86px]' : 'w-[300px]'
         )}
         initial={false}
