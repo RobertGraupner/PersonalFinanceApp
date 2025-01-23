@@ -1,24 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import type { PaginationProps } from '@/types/transactions';
 import { PageButton } from './PageButton';
 import { PageNumber } from './PageNumber';
 import { PageInput } from './PageInput';
-
-export function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: PaginationProps) {
+import { usePagination } from '@/hooks/usePagination';
+export function Pagination({ currentPage, totalPages }: PaginationProps) {
   const [isInputVisible, setIsInputVisible] = useState(false);
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      if (page >= 1 && page <= totalPages) {
-        onPageChange(page);
-      }
-    },
-    [onPageChange, totalPages]
-  );
+  const { handlePageChange } = usePagination();
 
   const MobilePagination = () => (
     <div className="flex gap-2 sm:hidden">

@@ -1,4 +1,4 @@
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type { ApiResponse } from '@/types/api';
 import type { ITransaction } from '@/lib/models/Transaction';
 import { useSearchParams } from 'next/navigation';
@@ -17,7 +17,7 @@ export function useTransactions() {
       }
       return response.json();
     },
-    placeholderData: keepPreviousData,
+    // placeholderData: keepPreviousData,
     staleTime: 1000 * 10,
   });
 }

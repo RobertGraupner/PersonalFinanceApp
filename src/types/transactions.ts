@@ -7,7 +7,6 @@ export interface TransactionsTableProps {
 export interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
 }
 
 export interface TransactionItemProps {

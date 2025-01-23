@@ -11,7 +11,7 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
 
   return (
     <tr className="border-b border-grey100 last:border-none">
-      <td className={cellClasses}>
+      <td className={cn(cellClasses, 'w-[40%]')}>
         <div className="flex items-center gap-4">
           <Image
             src={transaction.avatar}
@@ -39,7 +39,8 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
       <td
         className={cn(
           'hidden text-preset-5 text-grey500 sm:table-cell',
-          cellClasses
+          cellClasses,
+          'w-[25%]'
         )}
       >
         {transaction.category}
@@ -49,14 +50,15 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
       <td
         className={cn(
           'hidden text-preset-5 text-grey500 sm:table-cell',
-          cellClasses
+          cellClasses,
+          'w-[25%]'
         )}
       >
         {formattedDate}
       </td>
 
       {/* amount and date */}
-      <td className={cn('text-right', cellClasses)}>
+      <td className={cn('text-right', cellClasses, 'w-[10%]')}>
         <div className="flex flex-col items-end">
           <span
             className={cn('text-preset-4 font-bold', {
