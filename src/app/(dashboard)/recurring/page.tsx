@@ -1,7 +1,11 @@
-'use client';
+import { Suspense } from 'react';
+import { RecurringContent } from './components/RecurringContent';
+import { LoadingPage } from '@/components/Ui/LoadingPage';
 
-import { EmptyDataPage } from '@/components/Ui/EmptyDataPage';
-
-export default function RecurringPage() {
-  return <EmptyDataPage viewType="recurring" />;
+export default function TransactionsPage() {
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <RecurringContent />
+    </Suspense>
+  );
 }

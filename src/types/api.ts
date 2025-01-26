@@ -35,6 +35,19 @@ export interface PaginationResponse {
   perPage: number;
 }
 
+export interface RecurringStats {
+  total: number;
+  summary: Array<{
+    label: string;
+    count: number;
+    amount: number;
+  }>;
+}
+
+export interface RecurringResponse extends ApiResponse<ITransaction[]> {
+  stats: RecurringStats;
+}
+
 export interface ApiResponse<T> {
   data?: T;
   pagination?: PaginationResponse;

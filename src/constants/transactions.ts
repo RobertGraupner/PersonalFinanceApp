@@ -30,3 +30,9 @@ export const TABLE_COLUMNS = [
   { key: 'date', label: 'Transaction date' },
   { key: 'amount', label: 'Amount' },
 ] as const;
+
+export const RECURRING_TABLE_COLUMNS = [
+  { key: 'title', label: 'Bill Title' },
+  { key: 'date', label: 'Due Date' },
+  { key: 'amount', label: 'Amount' },
+] as const;

@@ -20,7 +20,6 @@ export function TransactionsContent() {
       />
     );
   }
-  console.log('data', data?.data?.length);
 
   if (isLoading) {
     return (

@@ -38,7 +38,9 @@ export default function LoginForm() {
         return;
       }
 
-      router.push('/overview');
+      if (result?.ok) {
+        router.push('/overview');
+      }
     } catch (error) {
       setError('An error occurred during login:' + error);
     }

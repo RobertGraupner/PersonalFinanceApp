@@ -1,7 +1,11 @@
 import type { ITransaction } from '@/lib/models/Transaction';
 
+export type TransactionWithStatus = ITransaction & {
+  status?: 'paid' | 'due' | 'upcoming';
+};
+
 export interface TransactionsTableProps {
-  transactions: ITransaction[];
+  transactions: TransactionWithStatus[];
 }
 
 export interface PaginationProps {
@@ -10,7 +14,7 @@ export interface PaginationProps {
 }
 
 export interface TransactionItemProps {
-  transaction: ITransaction;
+  transaction: TransactionWithStatus;
 }
 
 export interface PageButtonProps {
@@ -29,4 +33,16 @@ export interface PageInputProps {
   totalPages: number;
   onSubmit: (page: number) => void;
   onClose: () => void;
+}
+
+export interface TotalBillsCardProps {
+  total: number;
+}
+
+export interface SummaryCardProps {
+  items: {
+    label: string;
+    count: number;
+    amount: number;
+  }[];
 }
