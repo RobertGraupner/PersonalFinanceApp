@@ -1,7 +1,13 @@
 'use client';
 
-import { EmptyDataPage } from '@/components/Ui/EmptyDataPage';
+import { Suspense } from 'react';
+import { PotsContent } from './components/PotsContent';
+import { LoadingPage } from '@/components/Ui/LoadingPage';
 
 export default function PotsPage() {
-  return <EmptyDataPage viewType="pots" />;
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <PotsContent />
+    </Suspense>
+  );
 }

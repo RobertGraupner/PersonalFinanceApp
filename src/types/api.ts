@@ -1,4 +1,5 @@
 import type { ITransaction } from '@/lib/models/Transaction';
+import type { IPot } from '@/lib/models/Pot';
 import type { TransactionCategory } from '@/lib/models/Transaction';
 
 export interface QueryParams {
@@ -46,6 +47,10 @@ export interface RecurringStats {
 
 export interface RecurringResponse extends ApiResponse<ITransaction[]> {
   stats: RecurringStats;
+}
+
+export interface PotsResponse extends ApiResponse<IPot[]> {
+  data: IPot[];
 }
 
 export interface ApiResponse<T> {

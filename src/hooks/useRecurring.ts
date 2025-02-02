@@ -18,18 +18,26 @@ function calculateTotal(bills: ITransaction[]): number {
 
 function createTransactionWithStatus(
   transaction: ITransaction,
-  today: number,
+  todayTimestamp: number,
   dueDate: Date
 ): TransactionWithStatus {
-  const date = new Date(transaction.date);
-  date.setHours(0, 0, 0, 0);
+  const originalDate = new Date(transaction.date);
+  originalDate.setHours(0, 0, 0, 0);
+
+  const currentYear = new Date(todayTimestamp).getFullYear();
+  const currentMonth = new Date(todayTimestamp).getMonth();
+  const recurringDueDate = new Date(
+    currentYear,
+    currentMonth,
+    originalDate.getDate()
+  );
 
   return {
     ...transaction,
     status:
-      date.getDate() <= new Date(today).getDate()
+      recurringDueDate <= new Date(todayTimestamp)
         ? 'paid'
-        : date <= dueDate
+        : recurringDueDate <= dueDate
           ? 'due'
           : 'upcoming',
   };
