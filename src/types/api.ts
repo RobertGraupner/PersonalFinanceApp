@@ -1,7 +1,7 @@
 import type { ITransaction } from '@/lib/models/Transaction';
 import type { IPot } from '@/lib/models/Pot';
 import type { TransactionCategory } from '@/lib/models/Transaction';
-
+import type { IBudget } from '@/lib/models/Budget';
 export interface QueryParams {
   page: number;
   limit: number;
@@ -51,6 +51,10 @@ export interface RecurringResponse extends ApiResponse<ITransaction[]> {
 
 export interface PotsResponse extends ApiResponse<IPot[]> {
   data: IPot[];
+}
+
+export interface BudgetsResponse extends ApiResponse<IBudget[]> {
+  data: IBudget[];
 }
 
 export interface ApiResponse<T> {

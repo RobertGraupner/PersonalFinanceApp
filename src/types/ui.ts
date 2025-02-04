@@ -68,3 +68,43 @@ export interface FilterInputProps {
   placeholder?: string;
   className?: string;
 }
+
+// @note PageHeader component types
+export interface PageHeaderProps {
+  title: string;
+  addButtonLabel: string;
+  onAddClick: () => void;
+}
+
+// @note AddEntityButton component types
+export interface AddEntityButtonProps {
+  label: string;
+  onClick: () => void;
+}
+
+// @note ItemHeader component types
+export interface CardHeaderProps {
+  name: string;
+  theme: string;
+  onActionClick: () => void;
+}
+
+// @note SectionHeader component types
+export interface SectionHeaderProps {
+  title: string;
+  linkHref?: string;
+  linkText?: string;
+  titleStyle?: string;
+}
+
+// @note Chart component types
+export interface ChartProps {
+  data: Array<{
+    name: string;
+    value: number;
+    color: string;
+  }>;
+  total: number;
+  limit: number;
+  className?: string;
+}

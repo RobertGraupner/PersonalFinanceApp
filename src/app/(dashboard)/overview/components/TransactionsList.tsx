@@ -1,4 +1,5 @@
-import { Card } from './Card';
+import { ContentCard } from '@/components/Ui/ContentCard';
+import { SectionHeader } from '@/components/Ui/SectionHeader';
 import { TransactionsListProps } from '@/types/overview';
 import Image from 'next/image';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
@@ -6,7 +7,13 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils/cn';
 export function TransactionsList({ transactions }: TransactionsListProps) {
   return (
-    <Card title="Transactions" linkHref="/transactions" linkText="View All">
+    <ContentCard className="p-6 lg:p-6">
+      <SectionHeader
+        title="Transactions"
+        linkHref="/transactions"
+        linkText="View All"
+        titleStyle="text-preset-2"
+      />
       <>
         {transactions.map((transaction) => (
           <div
@@ -44,6 +51,6 @@ export function TransactionsList({ transactions }: TransactionsListProps) {
           </div>
         ))}
       </>
-    </Card>
+    </ContentCard>
   );
 }

@@ -1,11 +1,17 @@
-import { CardProps } from '@/types/overview';
 import Link from 'next/link';
 import Image from 'next/image';
-export function Card({ title, linkHref, linkText, children }: CardProps) {
+import type { SectionHeaderProps } from '@/types/ui';
+
+export function SectionHeader({
+  title,
+  linkHref,
+  linkText = 'See All',
+  titleStyle,
+}: SectionHeaderProps) {
   return (
-    <div className="flex flex-col justify-between rounded-xl bg-white p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-preset-2">{title}</h2>
+    <div className="mb-6 flex items-center justify-between">
+      <h2 className={titleStyle}>{title}</h2>
+      {linkHref && (
         <Link
           href={linkHref}
           className="flex gap-3 text-preset-4 text-grey500 hover:text-grey900"
@@ -21,8 +27,7 @@ export function Card({ title, linkHref, linkText, children }: CardProps) {
             aria-hidden="true"
           />
         </Link>
-      </div>
-      {children}
+      )}
     </div>
   );
 }

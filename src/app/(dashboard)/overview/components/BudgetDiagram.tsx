@@ -1,8 +1,8 @@
-import { Card } from './Card';
 import { ColorBar } from '@/components/Ui/ColorBar';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { formatCurrency } from '@/lib/utils/formatCurrency';
+import { Chart } from '@/components/Ui/Chart';
 import { BudgetDiagramProps } from '@/types/overview';
+import { ContentCard } from '@/components/Ui/ContentCard';
+import { SectionHeader } from '@/components/Ui/SectionHeader';
 
 export function BudgetDiagram({ budgets, spent }: BudgetDiagramProps) {
   const totalLimit = budgets.reduce((sum, budget) => sum + budget.maximum, 0);
@@ -19,56 +19,20 @@ export function BudgetDiagram({ budgets, spent }: BudgetDiagramProps) {
   }));
 
   return (
-    <Card title="Budgets" linkHref="/budgets" linkText="See Details">
-      <div className="flex h-full w-full flex-col items-center justify-center gap-6 sm:flex-row">
-        <div className="relative h-full w-full sm:h-[240px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius="65%"
-                outerRadius="75%"
-                paddingAngle={0}
-                dataKey="value"
-                strokeWidth={0}
-                startAngle={180}
-                endAngle={540}
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`inner-cell-${index}`} fill={`${entry.color}80`} />
-                ))}
-              </Pie>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius="75%"
-                outerRadius="95%"
-                paddingAngle={0}
-                dataKey="value"
-                strokeWidth={0}
-                startAngle={180}
-                endAngle={540}
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`outer-cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
-
-          {/* Centered text */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-            <p className="whitespace-nowrap text-preset-2">
-              {formatCurrency(totalSpent)}
-            </p>
-            <p className="whitespace-nowrap text-preset-5 text-grey500">
-              of {formatCurrency(totalLimit)} limit
-            </p>
-          </div>
-        </div>
+    <ContentCard className="p-6 lg:p-6">
+      <SectionHeader
+        title="Budgets"
+        linkHref="/budgets"
+        linkText="See Details"
+        titleStyle="text-preset-2"
+      />
+      <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 sm:flex-row xl:h-full">
+        <Chart
+          data={data}
+          total={totalSpent}
+          limit={totalLimit}
+          className="h-full sm:h-[240px]"
+        />
 
         {/* Budget list with proper height handling */}
         <div className="grid w-full grid-cols-2 gap-3 sm:flex sm:w-auto sm:flex-col sm:gap-4">
@@ -82,6 +46,6 @@ export function BudgetDiagram({ budgets, spent }: BudgetDiagramProps) {
           ))}
         </div>
       </div>
-    </Card>
+    </ContentCard>
   );
 }

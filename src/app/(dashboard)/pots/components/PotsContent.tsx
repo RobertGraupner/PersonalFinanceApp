@@ -4,8 +4,8 @@ import { usePots } from '@/hooks/usePots';
 import { ErrorPage } from '@/components/Ui/ErrorPage';
 import { EmptyDataPage } from '@/components/Ui/EmptyDataPage';
 import { PotsList } from './PotsList';
-import { AddEntityButton } from '@/components/Ui/AddEntityButton';
 import { PotsSkeleton } from './PotsSkeleton';
+import { PageHeader } from '@/components/Ui/PageHeader';
 
 export function PotsContent() {
   const { data, isLoading, error } = usePots();
@@ -30,13 +30,11 @@ export function PotsContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-preset-1">Pots</h1>
-        <AddEntityButton
-          onClick={() => console.log('Add pot')}
-          label="+ Add New Pot"
-        />
-      </div>
+      <PageHeader
+        title="Pots"
+        addButtonLabel="+ Add New Pot"
+        onAddClick={() => console.log('+ Add new pot')}
+      />
       <PotsList pots={data.data} />
     </div>
   );

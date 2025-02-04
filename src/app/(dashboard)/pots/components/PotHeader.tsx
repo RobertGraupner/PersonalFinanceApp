@@ -1,5 +1,5 @@
 import { IPot } from '@/lib/models/Pot';
-
+import { MoreHorizontal } from 'lucide-react';
 interface PotHeaderProps {
   pot: IPot;
 }
@@ -14,7 +14,10 @@ export function PotHeader({ pot }: PotHeaderProps) {
         />
         <h3 className="text-preset-2 text-grey900">{pot.name}</h3>
       </div>
-      <button className="text-bold pb-2 text-xl text-grey300">&#8230;</button>
+
+      <button className="text-grey300">
+        <MoreHorizontal className="h-6 w-6" />
+      </button>
     </div>
   );
 }

@@ -1,7 +1,13 @@
 'use client';
 
-import { EmptyDataPage } from '@/components/Ui/EmptyDataPage';
+import { Suspense } from 'react';
+import { BudgetsContent } from './components/BudgetsContent';
+import { LoadingPage } from '@/components/Ui/LoadingPage';
 
 export default function BudgetsPage() {
-  return <EmptyDataPage viewType="budgets" />;
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <BudgetsContent />
+    </Suspense>
+  );
 }

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { Card } from './Card';
+import { ContentCard } from '@/components/Ui/ContentCard';
+import { SectionHeader } from '@/components/Ui/SectionHeader';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { RecurringListProps } from '@/types/overview';
 
@@ -44,7 +45,13 @@ export function RecurringList({ recurring }: RecurringListProps) {
   ];
 
   return (
-    <Card title="Recurring Bills" linkHref="/recurring" linkText="See Details">
+    <ContentCard className="p-6 lg:p-6">
+      <SectionHeader
+        title="Recurring Bills"
+        linkHref="/recurring"
+        linkText="See Details"
+        titleStyle="text-preset-2"
+      />
       <div className="flex flex-col gap-2">
         {items.map((item) => (
           <div
@@ -61,6 +68,6 @@ export function RecurringList({ recurring }: RecurringListProps) {
           </div>
         ))}
       </div>
-    </Card>
+    </ContentCard>
   );
 }

@@ -8,6 +8,7 @@ import { EmptyDataPage } from '@/components/Ui/EmptyDataPage';
 import { ContentCard } from '@/components/Ui/ContentCard';
 import { Pagination } from './Pagination';
 import { TransactionsSkeleton } from './TransactionsSkeleton';
+import { PageHeader } from '@/components/Ui/PageHeader';
 
 export function TransactionsContent() {
   const { data, isLoading, error } = useTransactions();
@@ -39,7 +40,11 @@ export function TransactionsContent() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-preset-1">Transactions</h1>
+      <PageHeader
+        title="Transactions"
+        addButtonLabel="+ Add New Transaction"
+        onAddClick={() => console.log('+ Add new transaction')}
+      />
       <ContentCard>
         <TransactionsHeader />
         <TransactionsTable transactions={data.data} />
