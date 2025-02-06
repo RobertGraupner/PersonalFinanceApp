@@ -1,15 +1,44 @@
 'use client';
 
+import { useState } from 'react';
 import { useBudgets } from '@/hooks/useBudgets';
+import { useDeleteBudget } from '@/hooks/useBudgets';
 import { ErrorPage } from '@/components/Ui/ErrorPage';
 import { EmptyDataPage } from '@/components/Ui/EmptyDataPage';
 import { PageHeader } from '@/components/Ui/PageHeader';
 import { BudgetsSummary } from './BudgetsSummary';
 import { BudgetsSkeleton } from './BudgetsSkeleton';
 import { BudgetsList } from './BudgetsList';
-
+import { ModalState } from '@/types/budgets';
+import { IBudget } from '@/lib/models/Budget';
+import { DeleteModal } from '@/components/Ui/DeleteModal';
 export function BudgetsContent() {
+  const [modalState, setModalState] = useState<ModalState>({
+    type: null,
+    budget: null,
+  });
+
   const { data, isLoading, error } = useBudgets();
+  const deleteBudget = useDeleteBudget();
+
+  const handleOpenModal = (budget: IBudget) => {
+    setModalState({ type: 'delete', budget });
+  };
+
+  const handleDeleteBudget = async () => {
+    if (!modalState.budget?._id) return;
+
+    try {
+      await deleteBudget.mutateAsync(modalState.budget._id);
+      handleCloseModal();
+    } catch (error) {
+      console.error('Failed to delete budget:', error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalState({ type: null, budget: null });
+  };
 
   if (error) {
     return (
@@ -62,7 +91,20 @@ export function BudgetsContent() {
           />
         </div>
 
-        <BudgetsList budgets={data.data} spentData={data.spent} />
+        <BudgetsList
+          budgets={data.data}
+          spentData={data.spent}
+          onDelete={handleOpenModal}
+        />
+
+        <DeleteModal
+          isOpen={modalState.type === 'delete'}
+          onClose={handleCloseModal}
+          onConfirm={handleDeleteBudget}
+          isDeleting={deleteBudget.isPending}
+          itemName={modalState.budget?.category || ''}
+          itemType="budget"
+        />
       </div>
     </div>
   );

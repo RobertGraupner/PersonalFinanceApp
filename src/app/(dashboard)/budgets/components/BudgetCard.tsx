@@ -5,7 +5,12 @@ import { BudgetLatestTransactions } from './BudgetLatestTransactions';
 import type { BudgetCardProps } from '@/types/budgets';
 import { calculateBudgetMetrics } from '@/lib/utils/calculateBudgetMetrics';
 
-export function BudgetCard({ budget, spent, transactions }: BudgetCardProps) {
+export function BudgetCard({
+  budget,
+  spent,
+  transactions,
+  onDelete,
+}: BudgetCardProps) {
   const { remaining, progress } = calculateBudgetMetrics(budget.maximum, spent);
 
   return (
@@ -14,7 +19,7 @@ export function BudgetCard({ budget, spent, transactions }: BudgetCardProps) {
         name={budget.category}
         theme={budget.theme}
         onEdit={() => console.log('Edit clicked')}
-        onDelete={() => console.log('Delete clicked')}
+        onDelete={() => onDelete(budget)}
         type="budget"
       />
 

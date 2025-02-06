@@ -41,9 +41,17 @@ export function useDeleteBudget() {
       });
       if (!response.ok) throw new Error('Failed to delete budget');
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgets'] });
-      queryClient.invalidateQueries({ queryKey: ['overview'] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['budgets'],
+          refetchType: 'all',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['overview'],
+          refetchType: 'all',
+        }),
+      ]);
     },
   });
 }

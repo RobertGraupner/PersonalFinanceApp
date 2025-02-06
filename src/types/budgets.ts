@@ -15,6 +15,7 @@ export interface BudgetCardProps {
     date: string;
     avatar: string;
   }[];
+  onDelete: (budget: IBudget) => void;
 }
 
 export interface BudgetsSummaryProps {
@@ -52,4 +53,10 @@ export interface BudgetListItemProps {
 export interface BudgetsListProps {
   budgets: IBudget[];
   spentData: CategorySpent;
+  onDelete: (budget: IBudget) => void;
+}
+
+export interface ModalState {
+  type: 'delete' | null;
+  budget: IBudget | null;
 }

@@ -2,7 +2,11 @@ import { format } from 'date-fns';
 import { BudgetCard } from './BudgetCard';
 import type { BudgetsListProps } from '@/types/budgets';
 
-export function BudgetsList({ budgets, spentData }: BudgetsListProps) {
+export function BudgetsList({
+  budgets,
+  spentData,
+  onDelete,
+}: BudgetsListProps) {
   return (
     <div className="space-y-6 lg:col-span-3">
       {budgets.map((budget) => {
@@ -21,6 +25,7 @@ export function BudgetsList({ budgets, spentData }: BudgetsListProps) {
             budget={budget}
             spent={categoryData?.spent || 0}
             transactions={latestTransactions}
+            onDelete={onDelete}
           />
         );
       })}
