@@ -1,13 +1,12 @@
 'use client';
 
-import { format } from 'date-fns';
 import { useBudgets } from '@/hooks/useBudgets';
 import { ErrorPage } from '@/components/Ui/ErrorPage';
 import { EmptyDataPage } from '@/components/Ui/EmptyDataPage';
 import { PageHeader } from '@/components/Ui/PageHeader';
-import { BudgetCard } from './BudgetCard';
 import { BudgetsSummary } from './BudgetsSummary';
 import { BudgetsSkeleton } from './BudgetsSkeleton';
+import { BudgetsList } from './BudgetsList';
 
 export function BudgetsContent() {
   const { data, isLoading, error } = useBudgets();
@@ -63,27 +62,7 @@ export function BudgetsContent() {
           />
         </div>
 
-        <div className="space-y-6 lg:col-span-3">
-          {data.data.map((budget) => {
-            const categoryData = data.spent?.[budget.category];
-            const latestTransactions =
-              categoryData?.transactions?.map((t) => ({
-                name: t.name,
-                amount: t.amount,
-                date: format(new Date(t.date), 'd MMM yyyy'),
-                avatar: t.avatar,
-              })) || [];
-
-            return (
-              <BudgetCard
-                key={budget._id}
-                budget={budget}
-                spent={categoryData?.spent || 0}
-                transactions={latestTransactions}
-              />
-            );
-          })}
-        </div>
+        <BudgetsList budgets={data.data} spentData={data.spent} />
       </div>
     </div>
   );

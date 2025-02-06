@@ -48,3 +48,8 @@ export interface BudgetListItemProps {
   spent: number;
   maximum: number;
 }
+
+export interface BudgetsListProps {
+  budgets: IBudget[];
+  spentData: CategorySpent;
+}
