@@ -1,3 +1,5 @@
+'use client';
+
 import { format } from 'date-fns';
 import { useBudgets } from '@/hooks/useBudgets';
 import { ErrorPage } from '@/components/Ui/ErrorPage';

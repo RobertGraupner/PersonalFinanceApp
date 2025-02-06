@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+
 import type { ApiResponse } from '@/types/api';
 import type { IBudget } from '@/lib/models/Budget';
 import type { CategorySpent } from '@/types/api';
@@ -26,6 +27,23 @@ export function useBudgets() {
         data: budgets.data ?? [],
         spent: spent.data ?? {},
       };
+    },
+  });
+}
+
+export function useDeleteBudget() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (budgetId: string) => {
+      const response = await fetch(`/api/budgets/${budgetId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete budget');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgets'] });
+      queryClient.invalidateQueries({ queryKey: ['overview'] });
     },
   });
 }

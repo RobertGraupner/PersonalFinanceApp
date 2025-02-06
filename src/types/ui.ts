@@ -110,3 +110,29 @@ export interface ChartProps {
   limit: number;
   className?: string;
 }
+
+// @note Modal component types
+export interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  description?: string;
+  children: ReactNode;
+}
+
+// @note ActionMenu component types
+export interface ActionMenuProps {
+  onEdit: () => void;
+  onDelete: () => void;
+  type: 'budget' | 'pot';
+}
+
+// @note DeleteModal component types
+export interface DeleteModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  itemName: string;
+  itemType: 'budget' | 'pot';
+  isDeleting: boolean;
+}

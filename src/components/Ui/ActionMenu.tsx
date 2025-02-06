@@ -5,14 +5,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/Ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
-
-interface ActionMenuProps {
-  onEdit: () => void;
-  onDelete: () => void;
-  type: 'budget' | 'pot';
-}
+import { ActionMenuProps } from '@/types/ui';
 
 export function ActionMenu({ onEdit, onDelete, type }: ActionMenuProps) {
+  // add handlers to fix problem with pointer-events after modal close
+  const handleDelete = () => {
+    requestAnimationFrame(() => {
+      onDelete();
+    });
+  };
+  const handleEdit = () => {
+    requestAnimationFrame(() => {
+      onEdit();
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -20,16 +27,16 @@ export function ActionMenu({ onEdit, onDelete, type }: ActionMenuProps) {
           <MoreHorizontal className="h-6 w-6" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="px-5 py-0">
+      <DropdownMenuContent align="end" className="flex flex-col">
         <DropdownMenuItem
-          onClick={onEdit}
-          className="border-b border-grey100 px-0 py-3 text-preset-4 text-grey900"
+          onClick={handleEdit}
+          className="cursor-pointer border-b border-grey100 text-preset-4 text-grey900"
         >
           Edit {type}
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={onDelete}
-          className="px-0 py-3 text-preset-4 text-red"
+          onClick={handleDelete}
+          className="cursor-pointer text-preset-4 text-red"
         >
           Delete {type}
         </DropdownMenuItem>
