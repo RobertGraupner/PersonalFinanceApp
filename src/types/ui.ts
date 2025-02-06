@@ -86,7 +86,9 @@ export interface AddEntityButtonProps {
 export interface CardHeaderProps {
   name: string;
   theme: string;
-  onActionClick: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  type: 'budget' | 'pot';
 }
 
 // @note SectionHeader component types

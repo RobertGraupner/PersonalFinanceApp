@@ -1,7 +1,13 @@
-import { MoreHorizontal } from 'lucide-react';
+import { ActionMenu } from '@/components/Ui/ActionMenu';
 import type { CardHeaderProps } from '@/types/ui';
 
-export function CardHeader({ name, theme, onActionClick }: CardHeaderProps) {
+export function CardHeader({
+  name,
+  theme,
+  onEdit,
+  onDelete,
+  type,
+}: CardHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -11,12 +17,7 @@ export function CardHeader({ name, theme, onActionClick }: CardHeaderProps) {
         />
         <h3 className="text-preset-2 text-grey900">{name}</h3>
       </div>
-      <button
-        onClick={onActionClick}
-        className="text-grey300 transition-colors hover:text-grey500"
-      >
-        <MoreHorizontal className="h-6 w-6" />
-      </button>
+      <ActionMenu onEdit={onEdit} onDelete={onDelete} type={type} />
     </div>
   );
 }

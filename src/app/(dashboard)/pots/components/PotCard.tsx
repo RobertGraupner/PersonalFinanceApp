@@ -13,7 +13,9 @@ export function PotCard({ pot }: PotCardProps) {
       <CardHeader
         name={pot.name}
         theme={pot.theme}
-        onActionClick={() => console.log('Action clicked')}
+        onEdit={() => console.log('Edit clicked')}
+        onDelete={() => console.log('Delete clicked')}
+        type="pot"
       />
       <PotProgress pot={pot} />
       <PotActions potId={pot._id} />

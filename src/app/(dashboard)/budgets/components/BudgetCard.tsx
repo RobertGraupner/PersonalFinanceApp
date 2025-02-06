@@ -13,7 +13,9 @@ export function BudgetCard({ budget, spent, transactions }: BudgetCardProps) {
       <CardHeader
         name={budget.category}
         theme={budget.theme}
-        onActionClick={() => console.log('Action clicked')}
+        onEdit={() => console.log('Edit clicked')}
+        onDelete={() => console.log('Delete clicked')}
+        type="budget"
       />
 
       <BudgetInfo
