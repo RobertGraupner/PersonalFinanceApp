@@ -25,7 +25,11 @@ export function TransactionsContent() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-preset-1">Transactions</h1>
+        <PageHeader
+          title="Transactions"
+          addButtonLabel="+ Add New Transaction"
+          onAddClick={() => {}}
+        />
         <ContentCard>
           <TransactionsHeader />
           <TransactionsSkeleton />

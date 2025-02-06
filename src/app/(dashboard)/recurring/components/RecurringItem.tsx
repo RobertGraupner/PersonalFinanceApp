@@ -9,8 +9,6 @@ export function RecurringItem({ transaction }: TransactionItemProps) {
   const isPositiveAmount = transaction.amount > 0;
   const cellClasses = 'py-4 px-1 first:pl-0 last:pr-0';
 
-  console.log(transaction);
-
   return (
     <tr className="border-b border-grey100 last:border-none">
       <td className={cn(cellClasses, 'w-[40%]')}>

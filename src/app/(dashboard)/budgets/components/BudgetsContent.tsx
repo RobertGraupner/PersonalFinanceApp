@@ -20,7 +20,16 @@ export function BudgetsContent() {
   }
 
   if (isLoading) {
-    return <BudgetsSkeleton />;
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Budgets"
+          addButtonLabel="+ Add New Budget"
+          onAddClick={() => {}}
+        />
+        <BudgetsSkeleton />
+      </div>
+    );
   }
 
   if (!data?.data || data.data.length === 0) {

@@ -9,7 +9,6 @@ import { PageHeader } from '@/components/Ui/PageHeader';
 
 export function PotsContent() {
   const { data, isLoading, error } = usePots();
-  console.log(data);
 
   if (error) {
     return (
@@ -21,7 +20,16 @@ export function PotsContent() {
   }
 
   if (isLoading) {
-    return <PotsSkeleton />;
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Pots"
+          addButtonLabel="+ Add New Pot"
+          onAddClick={() => {}}
+        />
+        <PotsSkeleton />
+      </div>
+    );
   }
 
   if (!data || data.data.length === 0) {
