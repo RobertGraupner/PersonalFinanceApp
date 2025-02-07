@@ -1,8 +1,5 @@
 import { Button } from '@/components/Ui/button';
-
-interface PotActionsProps {
-  potId?: string;
-}
+import { PotActionsProps } from '@/types/pots';
 
 export function PotActions({ potId }: PotActionsProps) {
   return (

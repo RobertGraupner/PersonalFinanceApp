@@ -23,7 +23,7 @@ export function FilterSelect({
         <SelectTrigger className={cn('h-10 w-[160px] bg-white', className)}>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent side="bottom" sideOffset={4} position="item-aligned">
           <SelectGroup>
             {options.map((option) => (
               <SelectItem key={option.value} value={option.value}>

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { UseFormRegisterReturn } from 'react-hook-form';
 
 // @note State messages types
 export type ViewType =
@@ -135,4 +136,35 @@ export interface DeleteModalProps {
   itemName: string;
   itemType: 'budget' | 'pot';
   isDeleting: boolean;
+}
+
+// @note ThemeSelect component types
+export interface ThemeSelectOption {
+  value: string;
+  label: string;
+}
+
+export interface ThemeSelectProps {
+  options: readonly ThemeSelectOption[];
+  currentValue: string;
+  onSelect: (value: string) => void;
+  label?: string;
+  className?: string;
+}
+
+export interface AmountInputProps {
+  label?: string;
+  error?: string;
+  registration: Partial<UseFormRegisterReturn>;
+  className?: string;
+}
+
+export interface NameInputProps {
+  label?: string;
+  error?: string;
+  registration: Partial<UseFormRegisterReturn>;
+  value?: string;
+  maxLength?: number;
+  showCharacterCount?: boolean;
+  className?: string;
 }

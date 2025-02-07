@@ -1,16 +1,15 @@
-import { IPot } from '@/lib/models/Pot';
 import { PotCard } from './PotCard';
+import { PotsListProps } from '@/types/pots';
 
-interface PotsListProps {
-  pots: IPot[];
-  onDelete: (pot: IPot) => void;
-}
-
-export function PotsList({ pots, onDelete }: PotsListProps) {
+export function PotsList({ pots, onAction }: PotsListProps) {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {pots.map((pot) => (
-        <PotCard key={pot._id} pot={pot} onDelete={onDelete} />
+        <PotCard
+          key={pot._id}
+          pot={pot}
+          onAction={(type) => onAction(type, pot)}
+        />
       ))}
     </div>
   );

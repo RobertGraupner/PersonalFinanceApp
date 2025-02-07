@@ -1,8 +1,5 @@
-import { IPot } from '@/lib/models/Pot';
+import { PotHeaderProps } from '@/types/pots';
 import { MoreHorizontal } from 'lucide-react';
-interface PotHeaderProps {
-  pot: IPot;
-}
 
 export function PotHeader({ pot }: PotHeaderProps) {
   return (

@@ -1,10 +1,6 @@
 import { cn } from '@/lib/utils/cn';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
-import { IPot } from '@/lib/models/Pot';
-
-interface PotProgressProps {
-  pot: IPot;
-}
+import { PotProgressProps } from '@/types/pots';
 
 export function PotProgress({ pot }: PotProgressProps) {
   const progress = (pot.total / pot.target) * 100;
