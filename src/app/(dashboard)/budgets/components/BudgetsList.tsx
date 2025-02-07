@@ -5,7 +5,7 @@ import type { BudgetsListProps } from '@/types/budgets';
 export function BudgetsList({
   budgets,
   spentData,
-  onDelete,
+  onAction,
 }: BudgetsListProps) {
   return (
     <div className="space-y-6 lg:col-span-3">
@@ -25,7 +25,7 @@ export function BudgetsList({
             budget={budget}
             spent={categoryData?.spent || 0}
             transactions={latestTransactions}
-            onDelete={onDelete}
+            onAction={(type) => onAction(type, budget)}
           />
         );
       })}

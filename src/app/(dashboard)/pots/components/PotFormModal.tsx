@@ -83,9 +83,9 @@ export function PotFormModal({
               error={errors.target?.message}
               registration={register('target', {
                 required: 'Target amount is required',
-                min: {
-                  value: 0,
-                  message: 'Target must be greater than 0',
+                validate: {
+                  positive: (value) =>
+                    Number(value) > 0 || 'Target must be greater than 0',
                 },
               })}
             />

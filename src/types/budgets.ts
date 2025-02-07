@@ -1,5 +1,33 @@
 import type { IBudget } from '@/lib/models/Budget';
 import type { CategorySpent } from '@/types/api';
+import { TransactionCategory } from '@/lib/models/Transaction';
+
+export type FormModalType = 'add' | 'edit';
+export type DeleteModalType = 'delete';
+export type ModalType = FormModalType | DeleteModalType;
+
+export interface BaseModalState {
+  type: ModalType;
+  budget: IBudget | null;
+}
+
+export interface FormModalState {
+  type: FormModalType;
+  budget: IBudget | null;
+}
+
+export interface DeleteModalState {
+  type: DeleteModalType;
+  budget: IBudget;
+}
+
+export type ModalState =
+  | {
+      type: null;
+      budget: null;
+    }
+  | FormModalState
+  | DeleteModalState;
 
 export interface BudgetsResponse {
   data: IBudget[];
@@ -15,7 +43,7 @@ export interface BudgetCardProps {
     date: string;
     avatar: string;
   }[];
-  onDelete: (budget: IBudget) => void;
+  onAction: (type: 'delete' | 'edit', budget: IBudget) => void;
 }
 
 export interface BudgetsSummaryProps {
@@ -53,10 +81,26 @@ export interface BudgetListItemProps {
 export interface BudgetsListProps {
   budgets: IBudget[];
   spentData: CategorySpent;
-  onDelete: (budget: IBudget) => void;
+  onAction: (type: 'delete' | 'edit', budget: IBudget) => void;
 }
 
-export interface ModalState {
-  type: 'delete' | null;
+export interface BudgetFormData {
+  category: TransactionCategory;
+  maximum: number;
+  theme: string;
+}
+
+export interface FormData {
+  category: string;
+  maximum: string;
+  theme: string;
+}
+
+export interface BudgetFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: BudgetFormData) => void;
+  isLoading: boolean;
+  type: 'add' | 'edit';
   budget: IBudget | null;
 }

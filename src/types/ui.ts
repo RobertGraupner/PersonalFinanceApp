@@ -168,3 +168,20 @@ export interface NameInputProps {
   showCharacterCount?: boolean;
   className?: string;
 }
+
+// @note CategorySelect component types
+export interface CategoryOption {
+  value: string;
+  label: string;
+}
+
+export interface CategorySelectProps {
+  options: readonly {
+    value: string;
+    label: string;
+  }[];
+  currentValue: string;
+  onSelect: (value: string) => void;
+  label?: string;
+  className?: string;
+}

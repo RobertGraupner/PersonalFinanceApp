@@ -26,7 +26,7 @@ export function BudgetDiagram({ budgets, spent }: BudgetDiagramProps) {
         linkText="See Details"
         titleStyle="text-preset-2"
       />
-      <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 sm:flex-row xl:h-full">
+      <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 sm:flex-row">
         <Chart
           data={data}
           total={totalSpent}

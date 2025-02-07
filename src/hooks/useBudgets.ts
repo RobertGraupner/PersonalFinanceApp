@@ -55,3 +55,66 @@ export function useDeleteBudget() {
     },
   });
 }
+
+export function useAddBudget() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (budget: Partial<IBudget>) => {
+      const response = await fetch('/api/budgets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(budget),
+      });
+      if (!response.ok) throw new Error('Failed to add budget');
+      return response.json();
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['budgets'],
+          refetchType: 'all',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['overview'],
+          refetchType: 'all',
+        }),
+      ]);
+    },
+  });
+}
+
+export function useEditBudget() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...budget
+    }: Partial<IBudget> & { id: string }) => {
+      const response = await fetch(`/api/budgets/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(budget),
+      });
+      if (!response.ok) throw new Error('Failed to edit budget');
+      return response.json();
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['budgets'],
+          refetchType: 'all',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['overview'],
+          refetchType: 'all',
+        }),
+      ]);
+    },
+  });
+}

@@ -9,7 +9,7 @@ export function BudgetCard({
   budget,
   spent,
   transactions,
-  onDelete,
+  onAction,
 }: BudgetCardProps) {
   const { remaining, progress } = calculateBudgetMetrics(budget.maximum, spent);
 
@@ -18,8 +18,8 @@ export function BudgetCard({
       <CardHeader
         name={budget.category}
         theme={budget.theme}
-        onEdit={() => console.log('Edit clicked')}
-        onDelete={() => onDelete(budget)}
+        onEdit={() => onAction('edit', budget)}
+        onDelete={() => onAction('delete', budget)}
         type="budget"
       />
 
