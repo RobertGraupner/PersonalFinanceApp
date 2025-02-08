@@ -9,6 +9,8 @@ import type {
   ApiResponse,
   QueryParams,
 } from '@/types/api';
+import { User } from '@/lib/models/User';
+import mongoose from 'mongoose';
 
 export async function GET(request: NextRequest) {
   try {
@@ -158,37 +160,50 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  let session;
   try {
-    const session = await getAuthSession();
-
-    if (!session) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
-    }
+    const userSession = await getAuthSession();
+    if (!userSession)
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     await connectDB();
 
-    const body: Omit<ITransaction, '_id' | 'createdAt' | 'updatedAt'> =
-      await request.json();
+    session = await mongoose.startSession();
+    session.startTransaction();
 
-    const transaction = await Transaction.create({
-      ...body,
-      userId: session.user.id,
+    const body = await request.json();
+
+    // update user balance and create transaction
+    await Promise.all([
+      User.findByIdAndUpdate(
+        userSession.user.id,
+        {
+          $inc: {
+            'balance.current': body.amount,
+            ...(body.amount > 0
+              ? { 'balance.income': body.amount }
+              : { 'balance.expenses': Math.abs(body.amount) }),
+          },
+        },
+        { session }
+      ),
+      Transaction.create([{ ...body, userId: userSession.user.id }], {
+        session,
+      }),
+    ]);
+
+    await session.commitTransaction();
+    return Response.json({ data: body } as ApiResponse<ITransaction>, {
+      status: 201,
     });
-
-    const response: ApiResponse<ITransaction> = {
-      data: transaction,
-    };
-
-    return Response.json(response, { status: 201 });
   } catch (error) {
+    await session?.abortTransaction();
     console.error('Error creating transaction:', error);
-
-    const errorResponse: ApiResponse<never> = {
-      error: 'An error occurred while creating a transaction',
-    };
-
-    return Response.json(errorResponse, { status: 500 });
+    return Response.json(
+      { error: 'Failed to create transaction' } as ApiResponse<never>,
+      { status: 500 }
+    );
+  } finally {
+    await session?.endSession();
   }
 }

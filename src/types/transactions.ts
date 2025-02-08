@@ -1,4 +1,7 @@
-import type { ITransaction } from '@/lib/models/Transaction';
+import type {
+  ITransaction,
+  TransactionCategory,
+} from '@/lib/models/Transaction';
 
 export type TransactionWithStatus = ITransaction & {
   status?: 'paid' | 'due' | 'upcoming';
@@ -45,4 +48,18 @@ export interface SummaryCardProps {
     count: number;
     amount: number;
   }[];
+}
+
+export interface TransactionFormData {
+  name: string;
+  category: TransactionCategory;
+  amount: string;
+  recurring: boolean;
+}
+
+export interface TransactionFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: TransactionFormData) => void;
+  isLoading: boolean;
 }

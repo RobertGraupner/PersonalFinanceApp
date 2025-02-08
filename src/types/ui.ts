@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
-
+import { CATEGORY_ICONS } from '@/constants/transactions';
 // @note State messages types
 export type ViewType =
   | 'overview'
@@ -183,5 +183,12 @@ export interface CategorySelectProps {
   currentValue: string;
   onSelect: (value: string) => void;
   label?: string;
+  className?: string;
+}
+
+// @note IconRenderer component types
+export interface IconRendererProps {
+  iconName: keyof typeof CATEGORY_ICONS;
+  category?: string;
   className?: string;
 }

@@ -131,6 +131,22 @@ const config: Config = {
     },
   },
   plugins: [tailwindcssAnimate],
+  safelist: [
+    'bg-green',
+    'bg-yellow',
+    'bg-cyan',
+    'bg-navy',
+    'bg-purple',
+    'bg-purple2',
+    'bg-brown',
+    'bg-magenta',
+    'bg-blue',
+    'bg-navyGrey',
+    'bg-armyGreen',
+    'bg-gold',
+    'bg-orange',
+    'bg-turquoise',
+  ],
 };
 
 export default config;

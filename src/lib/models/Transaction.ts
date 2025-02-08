@@ -1,6 +1,10 @@
 import mongoose, { Model } from 'mongoose';
 
 export type TransactionCategory =
+  | 'Salary'
+  | 'Transfer'
+  | 'Refund'
+  | 'Investment'
   | 'Entertainment'
   | 'Bills'
   | 'Groceries'
@@ -42,6 +46,10 @@ const transactionSchema = new mongoose.Schema<ITransaction>(
       type: String,
       required: true,
       enum: [
+        'Salary',
+        'Transfer',
+        'Refund',
+        'Investment',
         'Entertainment',
         'Bills',
         'Groceries',

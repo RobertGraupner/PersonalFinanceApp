@@ -20,6 +20,7 @@ export function AmountInput({
           </span>
           <Input
             type="number"
+            step="0.01"
             {...registration}
             className={cn(
               'h-10 truncate bg-white pl-6 [appearance:textfield] placeholder:truncate [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
