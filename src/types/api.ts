@@ -65,7 +65,7 @@ export interface ApiResponse<T> {
 
 export interface MoneyOperation {
   amount: number;
-  operation: 'add' | 'withdraw';
+  operation: 'addMoney' | 'withdraw';
 }
 
 export interface CategorySpentData {

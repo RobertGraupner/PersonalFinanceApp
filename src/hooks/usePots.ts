@@ -97,3 +97,45 @@ export function useEditPot() {
     },
   });
 }
+
+export function useMoneyOperation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      potId,
+      amount,
+      operation,
+    }: {
+      potId: string;
+      amount: number;
+      operation: 'addMoney' | 'withdraw';
+    }) => {
+      const response = await fetch(`/api/pots/${potId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount, operation }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to process money operation');
+      }
+      return response.json();
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['pots'],
+          refetchType: 'all',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['overview'],
+          refetchType: 'all',
+        }),
+      ]);
+    },
+  });
+}

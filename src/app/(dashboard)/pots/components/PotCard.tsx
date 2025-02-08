@@ -15,7 +15,7 @@ export function PotCard({ pot, onAction }: PotCardProps) {
         onDelete={() => onAction('delete', pot)}
       />
       <PotProgress pot={pot} />
-      <PotActions potId={pot._id} />
+      <PotActions pot={pot} onAction={onAction} />
     </ContentCard>
   );
 }

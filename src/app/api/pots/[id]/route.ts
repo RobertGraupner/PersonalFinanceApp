@@ -115,7 +115,7 @@ export async function PUT(
         );
       }
 
-      if (operation === 'add') {
+      if (operation === 'addMoney') {
         // Check if user has enough funds
         if (user.balance.current < amount) {
           await session.abortTransaction();

@@ -41,6 +41,7 @@ export interface MoneyOperationModalProps {
   isProcessing: boolean;
   type: 'addMoney' | 'withdraw';
   pot: IPot;
+  userBalance: number;
 }
 
 export interface PotFormModalProps {
@@ -77,5 +78,14 @@ export interface PotCardProps {
 }
 
 export interface PotActionsProps {
-  potId?: string;
+  pot: IPot;
+  onAction: (type: ModalType, pot: IPot) => void;
+}
+
+export interface PotProgressBarProps {
+  baseProgressPercentage: number;
+  progressWidth: number;
+  changeWidth: number;
+  type: 'addMoney' | 'withdraw';
+  numericAmount: number;
 }
