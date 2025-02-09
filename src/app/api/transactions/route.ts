@@ -173,24 +173,24 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // update user balance and create transaction
-    await Promise.all([
-      User.findByIdAndUpdate(
-        userSession.user.id,
-        {
-          $inc: {
-            'balance.current': body.amount,
-            ...(body.amount > 0
-              ? { 'balance.income': body.amount }
-              : { 'balance.expenses': Math.abs(body.amount) }),
-          },
+    // first update user balance
+    await User.findByIdAndUpdate(
+      userSession.user.id,
+      {
+        $inc: {
+          'balance.current': body.amount,
+          ...(body.amount > 0
+            ? { 'balance.income': body.amount }
+            : { 'balance.expenses': Math.abs(body.amount) }),
         },
-        { session }
-      ),
-      Transaction.create([{ ...body, userId: userSession.user.id }], {
-        session,
-      }),
-    ]);
+      },
+      { session }
+    );
+
+    // then create transaction
+    await Transaction.create([{ ...body, userId: userSession.user.id }], {
+      session,
+    });
 
     await session.commitTransaction();
     return Response.json({ data: body } as ApiResponse<ITransaction>, {
