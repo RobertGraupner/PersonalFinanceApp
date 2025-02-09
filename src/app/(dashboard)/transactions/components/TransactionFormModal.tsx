@@ -70,7 +70,9 @@ export function TransactionFormModal({
               rules={{ required: true }}
               render={({ field }) => (
                 <CategorySelect
-                  options={CATEGORY_OPTIONS}
+                  options={CATEGORY_OPTIONS.filter(
+                    (option) => option.value !== 'all'
+                  )}
                   currentValue={field.value}
                   onSelect={field.onChange}
                 />

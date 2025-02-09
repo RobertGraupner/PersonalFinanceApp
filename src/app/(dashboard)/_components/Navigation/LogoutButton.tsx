@@ -17,27 +17,32 @@ export function LogoutButton({ isMinimized, isMobile }: LogoutButtonProps) {
         })
       }
       className={cn(
-        'flex items-center gap-4 text-grey300 transition-colors',
+        'flex items-center text-grey300 transition-colors',
         // Desktop styles
-        !isMobile && 'w-fit rounded-lg ps-8',
+        !isMobile && 'w-fit gap-4 rounded-lg ps-8',
         !isMobile && isMinimized && 'justify-center px-2',
         // Mobile styles
-        isMobile && 'flex-col gap-1'
+        isMobile &&
+          'relative flex h-[44px] w-16 flex-col items-center gap-2 rounded-t-[8px] pt-2 xs:h-[66px] xs:w-28'
       )}
       aria-label="Logout"
     >
-      <LogOut
-        className={cn('shrink-0', isMobile ? 'h-5 w-5' : 'h-6 w-6')}
-        aria-hidden="true"
-      />
+      <div className={cn(isMobile && 'h-6')}>
+        <LogOut
+          className={cn('shrink-0', isMobile ? 'h-5 w-5' : 'h-6 w-6')}
+          aria-hidden="true"
+        />
+      </div>
       {(!isMinimized || isMobile) && (
         <span
           className={cn(
             'font-bold',
-            isMobile ? 'text-preset-5' : 'text-preset-3 hover:text-white'
+            isMobile
+              ? 'hidden text-preset-5 xs:block'
+              : 'text-preset-3 hover:text-white'
           )}
         >
-          {isMobile ? '' : 'Logout'}
+          Logout
         </span>
       )}
     </button>

@@ -22,7 +22,7 @@ export function ThemeSelect({
         <SelectTrigger className={cn('h-10 bg-white', className)}>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="popper">
           <SelectGroup>
             {options.map((option) => (
               <SelectItem

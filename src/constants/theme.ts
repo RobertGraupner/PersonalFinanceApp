@@ -7,4 +7,8 @@ export const THEME_OPTIONS = [
   { value: '#7F9161', label: 'Olive' },
   { value: '#CAB361', label: 'Sand' },
   { value: '#826CB0', label: 'Violet' },
+  { value: '#277C78', label: 'Green' },
+  { value: '#82C9D7', label: 'Cyan' },
+  { value: '#F2CDAC', label: 'Yellow' },
+  { value: '#626070', label: 'Navy' },
 ] as const;

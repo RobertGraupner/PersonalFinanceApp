@@ -83,7 +83,16 @@ export function BudgetFormModal({
               rules={{ required: true }}
               render={({ field }) => (
                 <CategorySelect
-                  options={CATEGORY_OPTIONS}
+                  options={CATEGORY_OPTIONS.filter(
+                    (option) =>
+                      ![
+                        'all',
+                        'Salary',
+                        'Refund',
+                        'Investment',
+                        'Transfer',
+                      ].includes(option.value)
+                  )}
                   currentValue={field.value}
                   onSelect={field.onChange}
                 />

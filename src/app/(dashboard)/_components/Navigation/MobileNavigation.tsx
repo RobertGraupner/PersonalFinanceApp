@@ -1,6 +1,6 @@
 import { NavItem } from './NavItem';
 import { NAVIGATION_ITEMS } from '@/constants/navigation';
-
+import { LogoutButton } from './LogoutButton';
 export function MobileNavigation() {
   return (
     <nav
@@ -10,6 +10,7 @@ export function MobileNavigation() {
       {NAVIGATION_ITEMS.map((item) => (
         <NavItem key={item.href} {...item} isMobile />
       ))}
+      <LogoutButton isMobile />
     </nav>
   );
 }
