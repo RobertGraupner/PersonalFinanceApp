@@ -56,7 +56,17 @@ export function TransactionsContent() {
   }
 
   if (!data?.data || data.data.length === 0) {
-    return <EmptyDataPage viewType="transactions" />;
+    return (
+      <>
+        <EmptyDataPage viewType="transactions" onAddClick={handleOpenModal} />
+        <TransactionFormModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleAddTransaction}
+          isLoading={addTransaction.isPending}
+        />
+      </>
+    );
   }
 
   return (

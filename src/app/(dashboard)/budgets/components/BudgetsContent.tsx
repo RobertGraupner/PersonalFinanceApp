@@ -74,6 +74,9 @@ export function BudgetsContent() {
     setModalState({ type: null, budget: null });
   };
 
+  const isEditMode = modalState.type === 'edit';
+  const isFormModalOpen = modalState.type === 'add' || isEditMode;
+
   if (error) {
     return (
       <ErrorPage
@@ -97,11 +100,23 @@ export function BudgetsContent() {
   }
 
   if (!data?.data || data.data.length === 0) {
-    return <EmptyDataPage viewType="budgets" />;
+    return (
+      <>
+        <EmptyDataPage
+          viewType="budgets"
+          onAddClick={() => openFormModal('add')}
+        />
+        <BudgetFormModal
+          isOpen={isFormModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleFormSubmit}
+          isLoading={isEditMode ? editBudget.isPending : addBudget.isPending}
+          type={isEditMode ? 'edit' : 'add'}
+          budget={modalState.budget}
+        />
+      </>
+    );
   }
-
-  const isEditMode = modalState.type === 'edit';
-  const isFormModalOpen = modalState.type === 'add' || isEditMode;
 
   const totalSpent = data.data.reduce((acc, budget) => {
     const categorySpent = data.spent?.[budget.category]?.spent || 0;

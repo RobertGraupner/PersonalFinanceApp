@@ -2,9 +2,26 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { EMPTY_DATA_TEXTS } from '@/constants/stateMessages';
 import { EmptyDataPageProps } from '@/types/ui';
+import { AddEntityButton } from './AddEntityButton';
 
-export function EmptyDataPage({ viewType }: EmptyDataPageProps) {
+export function EmptyDataPage({ viewType, onAddClick }: EmptyDataPageProps) {
   const { title, description } = EMPTY_DATA_TEXTS[viewType];
+
+  const getButtonLabel = () => {
+    switch (viewType) {
+      case 'transactions':
+        return '+ Add New Transaction';
+      case 'budgets':
+        return '+ Add New Budget';
+      case 'pots':
+        return '+ Add New Pot';
+      default:
+        return '';
+    }
+  };
+
+  const buttonLabel = getButtonLabel();
+
   return (
     <div className="-mt-6 flex h-full flex-col items-center justify-center bg-beige100 px-5 text-center md:-mt-8">
       {/* Logo */}
@@ -41,13 +58,23 @@ export function EmptyDataPage({ viewType }: EmptyDataPageProps) {
           {title}
         </motion.h2>
         <motion.p
-          className="text-preset-4 text-grey500"
+          className="mb-8 text-preset-4 text-grey500"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           {description}
         </motion.p>
+
+        {buttonLabel && onAddClick && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <AddEntityButton onClick={onAddClick} label={buttonLabel} />
+          </motion.div>
+        )}
       </div>
     </div>
   );

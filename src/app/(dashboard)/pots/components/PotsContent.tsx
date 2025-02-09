@@ -101,6 +101,11 @@ export function PotsContent() {
     setModalState({ type: null, pot: null });
   };
 
+  const isEditMode = modalState.type === 'edit';
+  const isFormModalOpen = modalState.type === 'add' || isEditMode;
+  const isMoneyOperationModalOpen =
+    modalState.type === 'addMoney' || modalState.type === 'withdraw';
+
   if (error)
     return (
       <ErrorPage
@@ -122,12 +127,23 @@ export function PotsContent() {
     );
   }
 
-  if (!data || data.data.length === 0) return <EmptyDataPage viewType="pots" />;
-
-  const isEditMode = modalState.type === 'edit';
-  const isFormModalOpen = modalState.type === 'add' || isEditMode;
-  const isMoneyOperationModalOpen =
-    modalState.type === 'addMoney' || modalState.type === 'withdraw';
+  if (!data || data.data.length === 0)
+    return (
+      <>
+        <EmptyDataPage
+          viewType="pots"
+          onAddClick={() => openFormModal('add')}
+        />
+        <PotFormModal
+          isOpen={isFormModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleFormSubmit}
+          isLoading={isEditMode ? editPot.isPending : addPot.isPending}
+          type={isEditMode ? 'edit' : 'add'}
+          pot={modalState.pot}
+        />
+      </>
+    );
 
   return (
     <div className="space-y-6">

@@ -12,6 +12,7 @@ export type ViewType =
 // @note EmptyDataPage component types
 export interface EmptyDataPageProps {
   viewType: ViewType;
+  onAddClick?: () => void;
 }
 export interface EmptyDataText {
   title: string;
