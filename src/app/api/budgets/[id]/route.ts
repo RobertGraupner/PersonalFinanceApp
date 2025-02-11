@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/db';
 import { Budget } from '@/lib/models/Budget';
 import type { IBudget } from '@/lib/models/Budget';
@@ -12,35 +12,44 @@ function isValidId(id: string): boolean {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+
   try {
     const session = await getAuthSession();
 
     if (!session) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
+      return NextResponse.json(
+        { error: 'Unauthorized' } as ApiResponse<never>,
+        {
+          status: 401,
+        }
+      );
     }
 
     await connectDB();
 
-    if (!isValidId(params.id)) {
-      return Response.json(
+    if (!isValidId(id)) {
+      return NextResponse.json(
         { error: 'Invalid budget ID' } as ApiResponse<never>,
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
     const budget = await Budget.findOne({
-      _id: new mongoose.Types.ObjectId(params.id),
+      _id: new mongoose.Types.ObjectId(id),
       userId: session.user.id,
     });
 
     if (!budget) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Budget not found' } as ApiResponse<never>,
-        { status: 404 }
+        {
+          status: 404,
+        }
       );
     }
 
@@ -48,10 +57,10 @@ export async function GET(
       data: budget,
     };
 
-    return Response.json(response);
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error fetching budget:', error);
-    return Response.json(
+    return NextResponse.json(
       {
         error: 'An error occurred while fetching the budget',
       } as ApiResponse<never>,
@@ -62,21 +71,26 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+
   try {
     const session = await getAuthSession();
 
     if (!session) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
+      return NextResponse.json(
+        { error: 'Unauthorized' } as ApiResponse<never>,
+        {
+          status: 401,
+        }
+      );
     }
 
     await connectDB();
 
-    if (!isValidId(params.id)) {
-      return Response.json(
+    if (!isValidId(id)) {
+      return NextResponse.json(
         { error: 'Invalid budget ID' } as ApiResponse<never>,
         { status: 400 }
       );
@@ -86,7 +100,7 @@ export async function PUT(
 
     const budget = await Budget.findOneAndUpdate(
       {
-        _id: new mongoose.Types.ObjectId(params.id),
+        _id: new mongoose.Types.ObjectId(id),
         userId: session.user.id,
       },
       { $set: body },
@@ -94,7 +108,7 @@ export async function PUT(
     );
 
     if (!budget) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Budget not found' } as ApiResponse<never>,
         { status: 404 }
       );
@@ -104,10 +118,10 @@ export async function PUT(
       data: budget,
     };
 
-    return Response.json(response);
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error updating budget:', error);
-    return Response.json(
+    return NextResponse.json(
       {
         error: 'An error occurred while updating the budget',
       } as ApiResponse<never>,
@@ -118,42 +132,45 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+
   try {
     const session = await getAuthSession();
 
     if (!session) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
+      return NextResponse.json(
+        { error: 'Unauthorized' } as ApiResponse<never>,
+        { status: 401 }
+      );
     }
 
     await connectDB();
 
-    if (!isValidId(params.id)) {
-      return Response.json(
+    if (!isValidId(id)) {
+      return NextResponse.json(
         { error: 'Invalid budget ID' } as ApiResponse<never>,
         { status: 400 }
       );
     }
 
     const budget = await Budget.findOneAndDelete({
-      _id: new mongoose.Types.ObjectId(params.id),
+      _id: new mongoose.Types.ObjectId(id),
       userId: session.user.id,
     });
 
     if (!budget) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Budget not found' } as ApiResponse<never>,
         { status: 404 }
       );
     }
 
-    return new Response(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error('Error deleting budget:', error);
-    return Response.json(
+    return NextResponse.json(
       {
         error: 'An error occurred while deleting the budget',
       } as ApiResponse<never>,

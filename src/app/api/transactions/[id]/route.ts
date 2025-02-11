@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/db';
 import { Transaction } from '@/lib/models/Transaction';
 import type { ITransaction } from '@/lib/models/Transaction';
@@ -13,34 +13,39 @@ function isValidId(id: string): boolean {
 // Get single transaction
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+
   try {
     const session = await getAuthSession();
 
     if (!session) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
+      return NextResponse.json(
+        { error: 'Unauthorized' } as ApiResponse<never>,
+        {
+          status: 401,
+        }
+      );
     }
 
     await connectDB();
 
-    if (!isValidId(params.id)) {
-      return Response.json(
+    if (!isValidId(id)) {
+      return NextResponse.json(
         { error: 'Invalid transaction ID' } as ApiResponse<never>,
         { status: 400 }
       );
     }
 
-    // We have to use new mongoose.Types.ObjectId(params.id) to convert the id to a valid mongoose object id
+    // We have to use new mongoose.Types.ObjectId(id) to convert the id to a valid mongoose object id
     const transaction = await Transaction.findOne({
-      _id: new mongoose.Types.ObjectId(params.id),
+      _id: new mongoose.Types.ObjectId(id),
       userId: session.user.id,
     });
 
     if (!transaction) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Transaction not found' } as ApiResponse<never>,
         { status: 404 }
       );
@@ -50,7 +55,7 @@ export async function GET(
       data: transaction,
     };
 
-    return Response.json(response);
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error fetching transaction:', error);
 
@@ -58,28 +63,33 @@ export async function GET(
       error: 'An error occurred while fetching the transaction',
     };
 
-    return Response.json(errorResponse, { status: 500 });
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }
 
 // Update transaction
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+
   try {
     const session = await getAuthSession();
 
     if (!session) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
+      return NextResponse.json(
+        { error: 'Unauthorized' } as ApiResponse<never>,
+        {
+          status: 401,
+        }
+      );
     }
 
     await connectDB();
 
-    if (!isValidId(params.id)) {
-      return Response.json(
+    if (!isValidId(id)) {
+      return NextResponse.json(
         { error: 'Invalid transaction ID' } as ApiResponse<never>,
         { status: 400 }
       );
@@ -89,7 +99,7 @@ export async function PUT(
 
     const transaction = await Transaction.findOneAndUpdate(
       {
-        _id: new mongoose.Types.ObjectId(params.id),
+        _id: new mongoose.Types.ObjectId(id),
         userId: session.user.id,
       },
       { $set: body },
@@ -97,7 +107,7 @@ export async function PUT(
     );
 
     if (!transaction) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Transaction not found' } as ApiResponse<never>,
         { status: 404 }
       );
@@ -107,7 +117,7 @@ export async function PUT(
       data: transaction,
     };
 
-    return Response.json(response);
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error updating transaction:', error);
 
@@ -115,46 +125,51 @@ export async function PUT(
       error: 'An error occurred while updating the transaction',
     };
 
-    return Response.json(errorResponse, { status: 500 });
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }
 
 // Delete transaction
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+
   try {
     const session = await getAuthSession();
 
     if (!session) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
+      return NextResponse.json(
+        { error: 'Unauthorized' } as ApiResponse<never>,
+        {
+          status: 401,
+        }
+      );
     }
 
     await connectDB();
 
-    if (!isValidId(params.id)) {
-      return Response.json(
+    if (!isValidId(id)) {
+      return NextResponse.json(
         { error: 'Invalid transaction ID' } as ApiResponse<never>,
         { status: 400 }
       );
     }
 
     const transaction = await Transaction.findOneAndDelete({
-      _id: new mongoose.Types.ObjectId(params.id),
+      _id: new mongoose.Types.ObjectId(id),
       userId: session.user.id,
     });
 
     if (!transaction) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Transaction not found' } as ApiResponse<never>,
         { status: 404 }
       );
     }
 
-    return new Response(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error('Error deleting transaction:', error);
 
@@ -162,6 +177,6 @@ export async function DELETE(
       error: 'An error occurred while deleting the transaction',
     };
 
-    return Response.json(errorResponse, { status: 500 });
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

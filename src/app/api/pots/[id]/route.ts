@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/db';
 import { Pot } from '@/lib/models/Pot';
 import { User } from '@/lib/models/User';
@@ -11,115 +11,141 @@ function isValidId(id: string): boolean {
   return mongoose.Types.ObjectId.isValid(id);
 }
 
-// Get single pot
+// Pobranie pojedynczego słoika (pot)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+
   try {
     const session = await getAuthSession();
 
     if (!session) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
+      return NextResponse.json(
+        { error: 'Unauthorized' } as ApiResponse<never>,
+        {
+          status: 401,
+        }
+      );
     }
 
     await connectDB();
 
-    if (!isValidId(params.id)) {
-      return Response.json({ error: 'Invalid pot ID' } as ApiResponse<never>, {
-        status: 400,
-      });
+    if (!isValidId(id)) {
+      return NextResponse.json(
+        { error: 'Invalid pot ID' } as ApiResponse<never>,
+        {
+          status: 400,
+        }
+      );
     }
 
     const pot = await Pot.findOne({
-      _id: new mongoose.Types.ObjectId(params.id),
+      _id: new mongoose.Types.ObjectId(id),
       userId: session.user.id,
     });
 
     if (!pot) {
-      return Response.json({ error: 'Pot not found' } as ApiResponse<never>, {
-        status: 404,
-      });
+      return NextResponse.json(
+        { error: 'Pot not found' } as ApiResponse<never>,
+        {
+          status: 404,
+        }
+      );
     }
 
-    return Response.json({ data: pot } as ApiResponse<IPot>);
+    return NextResponse.json({ data: pot } as ApiResponse<IPot>);
   } catch (error) {
     console.error('Error fetching the pot:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'An error occurred while fetching the pot' },
       { status: 500 }
     );
   }
 }
 
-// Update pot or add/withdraw funds
+// Aktualizacja słoika lub dodanie/wycofanie środków
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  let session;
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+  let mongoSession;
+
   try {
     const userSession = await getAuthSession();
 
     if (!userSession) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
+      return NextResponse.json(
+        { error: 'Unauthorized' } as ApiResponse<never>,
+        {
+          status: 401,
+        }
+      );
     }
 
     await connectDB();
-    // Use session to ensure atomicity of the operation. It's not needed for this operation, but it's a good practice to use it
-    session = await mongoose.startSession();
-    session.startTransaction();
 
-    if (!isValidId(params.id)) {
-      return Response.json({ error: 'Invalid pot ID' } as ApiResponse<never>, {
-        status: 400,
-      });
+    // Używamy sesji żeby zapewnić atomowość operacji
+    mongoSession = await mongoose.startSession();
+    mongoSession.startTransaction();
+
+    if (!isValidId(id)) {
+      await mongoSession.abortTransaction();
+      return NextResponse.json(
+        { error: 'Invalid pot ID' } as ApiResponse<never>,
+        {
+          status: 400,
+        }
+      );
     }
 
     const body = await request.json();
 
-    // Check if the operation and amount are provided
+    // Jeżeli przekazana jest operacja (dodanie/wycofanie środków)
     if (body.operation && body.amount) {
       const { amount, operation } = body as MoneyOperation;
 
       if (amount <= 0) {
-        await session.abortTransaction();
-        return Response.json(
+        await mongoSession.abortTransaction();
+        return NextResponse.json(
           { error: 'Amount must be greater than 0' } as ApiResponse<never>,
           { status: 400 }
         );
       }
 
       const pot = await Pot.findOne({
-        _id: new mongoose.Types.ObjectId(params.id),
+        _id: new mongoose.Types.ObjectId(id),
         userId: userSession.user.id,
-      }).session(session);
+      }).session(mongoSession);
 
       if (!pot) {
-        await session.abortTransaction();
-        return Response.json({ error: 'Pot not found' } as ApiResponse<never>, {
-          status: 404,
-        });
+        await mongoSession.abortTransaction();
+        return NextResponse.json(
+          { error: 'Pot not found' } as ApiResponse<never>,
+          {
+            status: 404,
+          }
+        );
       }
 
-      const user = await User.findById(userSession.user.id).session(session);
+      const user = await User.findById(userSession.user.id).session(
+        mongoSession
+      );
       if (!user) {
-        await session.abortTransaction();
-        return Response.json(
+        await mongoSession.abortTransaction();
+        return NextResponse.json(
           { error: 'User not found' } as ApiResponse<never>,
           { status: 404 }
         );
       }
 
       if (operation === 'addMoney') {
-        // Check if user has enough funds
+        // Sprawdzamy czy użytkownik ma wystarczające środki
         if (user.balance.current < amount) {
-          await session.abortTransaction();
-          return Response.json(
+          await mongoSession.abortTransaction();
+          return NextResponse.json(
             {
               error: 'Insufficient funds in user balance',
             } as ApiResponse<never>,
@@ -127,146 +153,163 @@ export async function PUT(
           );
         }
 
-        // Withdraw funds from user's balance
+        // Pobieramy środki z salda użytkownika
         await User.findByIdAndUpdate(
           userSession.user.id,
           { $inc: { 'balance.current': -amount } },
-          { session }
+          { session: mongoSession }
         );
 
-        // Add funds to pot
+        // Dodajemy środki do słoika
         await Pot.findOneAndUpdate(
           {
-            _id: new mongoose.Types.ObjectId(params.id),
+            _id: new mongoose.Types.ObjectId(id),
             userId: userSession.user.id,
           },
           { $inc: { total: amount } },
-          { session }
+          { session: mongoSession }
         );
       } else if (operation === 'withdraw') {
-        // Check if pot has enough funds
+        // Sprawdzamy czy słoik ma wystarczające środki
         if (pot.total < amount) {
-          await session.abortTransaction();
-          return Response.json(
+          await mongoSession.abortTransaction();
+          return NextResponse.json(
             { error: 'Insufficient funds in pot' } as ApiResponse<never>,
             { status: 400 }
           );
         }
 
-        // Add funds to user's balance
+        // Dodajemy środki do salda użytkownika
         await User.findByIdAndUpdate(
           userSession.user.id,
           { $inc: { 'balance.current': amount } },
-          { session }
+          { session: mongoSession }
         );
 
-        // Withdraw funds from pot
+        // Pobieramy środki z słoika
         await Pot.findByIdAndUpdate(
           {
-            _id: new mongoose.Types.ObjectId(params.id),
+            _id: new mongoose.Types.ObjectId(id),
             userId: userSession.user.id,
           },
           { $inc: { total: -amount } },
-          { session }
+          { session: mongoSession }
         );
       }
 
-      await session.commitTransaction();
+      await mongoSession.commitTransaction();
     } else {
-      // Regular pot update
+      // Zwykła aktualizacja słoika
       const updatedPot = await Pot.findOneAndUpdate(
         {
-          _id: new mongoose.Types.ObjectId(params.id),
+          _id: new mongoose.Types.ObjectId(id),
           userId: userSession.user.id,
         },
         body,
         { new: true }
       );
       if (!updatedPot) {
-        return Response.json({ error: 'Pot not found' } as ApiResponse<never>, {
-          status: 404,
-        });
+        await mongoSession.abortTransaction();
+        return NextResponse.json(
+          { error: 'Pot not found' } as ApiResponse<never>,
+          {
+            status: 404,
+          }
+        );
       }
-      return Response.json({ data: updatedPot } as ApiResponse<IPot>);
+      await mongoSession.commitTransaction();
+      return NextResponse.json({ data: updatedPot } as ApiResponse<IPot>);
     }
 
     const updatedPot = await Pot.findOne({
-      _id: new mongoose.Types.ObjectId(params.id),
+      _id: new mongoose.Types.ObjectId(id),
       userId: userSession.user.id,
     });
 
-    return Response.json({ data: updatedPot } as ApiResponse<IPot>);
+    return NextResponse.json({ data: updatedPot } as ApiResponse<IPot>);
   } catch (error) {
     console.error('Error updating pot:', error);
-    return Response.json(
+    return NextResponse.json(
       {
         error: 'An error occurred while updating the pot',
       } as ApiResponse<never>,
       { status: 500 }
     );
   } finally {
-    await session?.endSession();
+    await mongoSession?.endSession();
   }
 }
 
-// Delete pot
+// Usunięcie słoika
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  let session;
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params;
+  let mongoSession;
+
   try {
     const userSession = await getAuthSession();
 
     if (!userSession) {
-      return Response.json({ error: 'Unauthorized' } as ApiResponse<never>, {
-        status: 401,
-      });
+      return NextResponse.json(
+        { error: 'Unauthorized' } as ApiResponse<never>,
+        {
+          status: 401,
+        }
+      );
     }
 
     await connectDB();
 
-    session = await mongoose.startSession();
-    session.startTransaction();
+    mongoSession = await mongoose.startSession();
+    mongoSession.startTransaction();
 
-    if (!isValidId(params.id)) {
-      return Response.json({ error: 'Invalid pot ID' } as ApiResponse<never>, {
-        status: 400,
-      });
+    if (!isValidId(id)) {
+      await mongoSession.abortTransaction();
+      return NextResponse.json(
+        { error: 'Invalid pot ID' } as ApiResponse<never>,
+        {
+          status: 400,
+        }
+      );
     }
 
     const pot = await Pot.findOne({
-      _id: new mongoose.Types.ObjectId(params.id),
+      _id: new mongoose.Types.ObjectId(id),
       userId: userSession.user.id,
-    }).session(session);
+    }).session(mongoSession);
 
     if (!pot) {
-      await session.abortTransaction();
-      return Response.json({ error: 'Pot not found' } as ApiResponse<never>, {
-        status: 404,
-      });
+      await mongoSession.abortTransaction();
+      return NextResponse.json(
+        { error: 'Pot not found' } as ApiResponse<never>,
+        {
+          status: 404,
+        }
+      );
     }
 
-    // Return funds to user's balance
+    // Zwracamy środki do salda użytkownika
     await User.findByIdAndUpdate(
       userSession.user.id,
       { $inc: { 'balance.current': pot.total } },
-      { session }
+      { session: mongoSession }
     );
 
-    await pot.deleteOne({ session });
-    await session.commitTransaction();
+    await pot.deleteOne({ session: mongoSession });
+    await mongoSession.commitTransaction();
 
-    return new Response(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error('Error deleting pot:', error);
-    return Response.json(
+    return NextResponse.json(
       {
         error: 'An error occurred while deleting the pot',
       } as ApiResponse<never>,
       { status: 500 }
     );
   } finally {
-    await session?.endSession();
+    await mongoSession?.endSession();
   }
 }
