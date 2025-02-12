@@ -27,12 +27,7 @@ export function BudgetDiagram({ budgets, spent }: BudgetDiagramProps) {
         titleStyle="text-preset-2"
       />
       <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 sm:flex-row">
-        <Chart
-          data={data}
-          total={totalSpent}
-          limit={totalLimit}
-          className="h-full sm:h-[240px]"
-        />
+        <Chart data={data} total={totalSpent} limit={totalLimit} />
 
         {/* Budget list with proper height handling */}
         <div className="grid w-full grid-cols-2 gap-3 sm:flex sm:w-auto sm:flex-col sm:gap-4">

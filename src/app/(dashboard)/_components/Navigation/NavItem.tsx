@@ -35,11 +35,12 @@ export function NavItem({
         <div className="h-6">
           <Image
             src={icon}
-            alt={label}
+            alt=""
             width={24}
             height={24}
             style={{
               filter: isActive ? 'var(--icon-active-filter)' : 'none',
+              maxHeight: '24px',
             }}
           />
         </div>
@@ -67,7 +68,7 @@ export function NavItem({
       <div className="shrink-0">
         <Image
           src={icon}
-          alt={label}
+          alt=""
           width={24}
           height={24}
           style={{

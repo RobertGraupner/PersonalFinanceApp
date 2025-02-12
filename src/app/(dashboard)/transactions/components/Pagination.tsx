@@ -16,6 +16,14 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
         onClick={handlePageChange}
       />
 
+      {currentPage > 1 && currentPage < totalPages && (
+        <PageNumber
+          page={currentPage}
+          isActive={true}
+          onClick={handlePageChange}
+        />
+      )}
+
       {isInputVisible ? (
         <PageInput
           totalPages={totalPages}

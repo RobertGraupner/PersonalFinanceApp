@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Check } from 'lucide-react';
 import Image from 'next/image';
 import {
@@ -16,8 +17,15 @@ export function FilterPopover({
   label,
   translateX = '0',
 }: FilterPopoverProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleSelect = (value: string) => {
+    onSelect(value);
+    setIsOpen(false);
+  };
+
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild aria-label={label}>
         <button className="p-2">
           <Image src={icon} alt={iconAlt} width={24} height={24} />
@@ -29,7 +37,7 @@ export function FilterPopover({
             <button
               key={option.value}
               className="flex w-full items-center justify-between rounded-md px-1 py-2 text-left text-sm hover:bg-gray-100"
-              onClick={() => onSelect(option.value)}
+              onClick={() => handleSelect(option.value)}
             >
               {option.label}
               {currentValue === option.value && <Check className="h-4 w-4" />}
