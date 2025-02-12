@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils/cn';
 export function SummaryCard({ items }: SummaryCardProps) {
   return (
     <div className="flex w-full flex-col items-start gap-5 rounded-xl bg-white p-6">
-      <h3 className="text-preset-3">Summary</h3>
+      <h2 className="text-preset-3">Summary</h2>
       <div className="w-full space-y-3">
         {items.map((item) => (
           <div

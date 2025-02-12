@@ -23,7 +23,10 @@ export function ActionMenu({ onEdit, onDelete, type }: ActionMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="text-grey300">
+        <button
+          className="text-grey300"
+          aria-label={`Open action menu for ${type}`}
+        >
           <MoreHorizontal className="h-6 w-6" />
         </button>
       </DropdownMenuTrigger>
@@ -31,12 +34,14 @@ export function ActionMenu({ onEdit, onDelete, type }: ActionMenuProps) {
         <DropdownMenuItem
           onClick={handleEdit}
           className="cursor-pointer border-b border-grey100 text-preset-4 text-grey900"
+          aria-label={`Edit ${type}`}
         >
           Edit {type}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleDelete}
           className="cursor-pointer text-preset-4 text-red"
+          aria-label={`Delete ${type}`}
         >
           Delete {type}
         </DropdownMenuItem>

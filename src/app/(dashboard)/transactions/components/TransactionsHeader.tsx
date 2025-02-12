@@ -65,6 +65,7 @@ export function TransactionsHeader() {
           currentValue={currentSort}
           onSelect={handleSort}
           label="Sort by"
+          aria-label="Sort by"
         />
 
         <FilterSelect
@@ -72,6 +73,7 @@ export function TransactionsHeader() {
           currentValue={currentCategory}
           onSelect={handleCategory}
           label="Category"
+          aria-label="Category"
         />
       </div>
     </div>

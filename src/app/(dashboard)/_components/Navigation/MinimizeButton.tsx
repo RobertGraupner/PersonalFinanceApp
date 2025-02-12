@@ -17,7 +17,7 @@ export function MinimizeButton({
       >
         <Image
           src="/images/icon-minimize-menu.svg"
-          alt="Minimize menu"
+          alt=""
           width={24}
           height={24}
         />

@@ -15,7 +15,7 @@ export function CardHeader({
           className="h-4 w-4 rounded-full"
           style={{ backgroundColor: theme }}
         />
-        <h3 className="text-preset-2 text-grey900">{name}</h3>
+        <h2 className="text-preset-2 text-grey900">{name}</h2>
       </div>
       <ActionMenu onEdit={onEdit} onDelete={onDelete} type={type} />
     </div>

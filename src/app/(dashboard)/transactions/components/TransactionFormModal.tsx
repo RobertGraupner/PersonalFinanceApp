@@ -23,6 +23,7 @@ export function TransactionFormModal({
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<TransactionFormData>({
     defaultValues: {
@@ -32,6 +33,8 @@ export function TransactionFormModal({
       recurring: false,
     },
   });
+
+  const name = watch('name');
 
   useEffect(() => {
     if (!isOpen) {
@@ -55,9 +58,14 @@ export function TransactionFormModal({
           <NameInput
             label="Receiver / Sender"
             error={errors.name?.message}
-            registration={{
-              ...register('name', { required: 'Name is required' }),
-            }}
+            registration={register('name', {
+              required: 'Name is required',
+              maxLength: {
+                value: 30,
+                message: 'Name cannot exceed 30 characters',
+              },
+            })}
+            value={name}
           />
 
           <div>

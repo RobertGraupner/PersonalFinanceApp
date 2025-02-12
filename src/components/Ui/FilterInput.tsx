@@ -17,7 +17,7 @@ export function FilterInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={cn(
-          'h-10 truncate bg-white pr-10 placeholder:truncate',
+          'h-10 truncate bg-white pr-10 placeholder:truncate [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden',
           className
         )}
       />

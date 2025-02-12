@@ -193,3 +193,9 @@ export interface IconRendererProps {
   category?: string;
   className?: string;
 }
+
+// @note EmptyTableState component types
+export interface EmptyTableStateProps {
+  title?: string;
+  description?: string;
+}

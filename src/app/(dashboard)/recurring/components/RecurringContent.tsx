@@ -9,9 +9,13 @@ import { ContentCard } from '@/components/Ui/ContentCard';
 import { SummaryCard } from './SummaryCard';
 import { TotalBillsCard } from './TotalBillsCard';
 import { RecurringSkeleton } from './RecurringSkeleton';
-
+import { EmptyTableState } from '@/components/Ui/EmptyTableState';
+import { useSearchParams } from 'next/navigation';
 export function RecurringContent() {
   const { data, isLoading, error } = useRecurringBills();
+  const searchParams = useSearchParams();
+
+  const hasFilters = searchParams.toString().length > 0;
 
   if (error) {
     return (
@@ -26,8 +30,16 @@ export function RecurringContent() {
     return <RecurringSkeleton />;
   }
 
-  if (!data?.data || data.data.length === 0) {
-    return <EmptyDataPage viewType="recurring" />;
+  if (!data?.data || (data.data.length === 0 && !hasFilters)) {
+    return (
+      <>
+        <EmptyDataPage viewType="recurring" />
+        <EmptyTableState
+          title="No recurring bills found"
+          description="Try adding a new recurring bill"
+        />
+      </>
+    );
   }
 
   return (
@@ -41,7 +53,16 @@ export function RecurringContent() {
         <div className="xl:col-span-2">
           <ContentCard>
             <RecurringHeader />
-            <RecurringTable transactions={data.data} />
+            {data?.data && data.data.length > 0 ? (
+              <>
+                <RecurringTable transactions={data.data} />
+              </>
+            ) : (
+              <EmptyTableState
+                title="No recurring bills found"
+                description="Try adding a new recurring bill"
+              />
+            )}
           </ContentCard>
         </div>
       </div>

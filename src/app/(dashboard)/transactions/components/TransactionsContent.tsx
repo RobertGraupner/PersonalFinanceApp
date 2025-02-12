@@ -11,12 +11,17 @@ import { Pagination } from './Pagination';
 import { TransactionsSkeleton } from './TransactionsSkeleton';
 import { PageHeader } from '@/components/Ui/PageHeader';
 import { TransactionFormModal } from './TransactionFormModal';
+import { EmptyTableState } from '@/components/Ui/EmptyTableState';
+import { useSearchParams } from 'next/navigation';
 import type { TransactionFormData } from '@/types/transactions';
 
 export function TransactionsContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const searchParams = useSearchParams();
   const { data, isLoading, error } = useTransactions();
   const addTransaction = useAddTransaction();
+
+  const hasFilters = searchParams.toString().length > 0;
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -55,7 +60,7 @@ export function TransactionsContent() {
     );
   }
 
-  if (!data?.data || data.data.length === 0) {
+  if (!data?.data || (data.data.length === 0 && !hasFilters)) {
     return (
       <>
         <EmptyDataPage viewType="transactions" onAddClick={handleOpenModal} />
@@ -78,11 +83,20 @@ export function TransactionsContent() {
       />
       <ContentCard>
         <TransactionsHeader />
-        <TransactionsTable transactions={data.data} />
-        {data.pagination && (
-          <Pagination
-            currentPage={data.pagination.currentPage!}
-            totalPages={data.pagination.pages!}
+        {data?.data && data.data.length > 0 ? (
+          <>
+            <TransactionsTable transactions={data.data} />
+            {data.pagination && (
+              <Pagination
+                currentPage={data.pagination.currentPage!}
+                totalPages={data.pagination.pages!}
+              />
+            )}
+          </>
+        ) : (
+          <EmptyTableState
+            title="No transactions found"
+            description="Try changing the search criteria or filters"
           />
         )}
       </ContentCard>
