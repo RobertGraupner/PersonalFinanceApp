@@ -51,8 +51,6 @@ export function PotsContent() {
       openFormModal(type, pot);
     } else if (type === 'addMoney' || type === 'withdraw') {
       openOperationModal(type, pot);
-    } else {
-      console.log('Unhandled modal type:', type);
     }
   }
 

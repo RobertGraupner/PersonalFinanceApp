@@ -39,8 +39,6 @@ export function BudgetsContent() {
       openDeleteModal(budget);
     } else if (type === 'add' || type === 'edit') {
       openFormModal(type, budget);
-    } else {
-      console.log('Unhandled modal type:', type);
     }
   }
 
