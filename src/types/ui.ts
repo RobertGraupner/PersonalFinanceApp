@@ -126,7 +126,7 @@ export interface ModalProps {
 export interface ActionMenuProps {
   onEdit: () => void;
   onDelete: () => void;
-  type: 'budget' | 'pot';
+  type: 'budget' | 'pot' | 'transaction';
 }
 
 // @note DeleteModal component types
@@ -135,7 +135,7 @@ export interface DeleteModalProps {
   onClose: () => void;
   onConfirm: () => void;
   itemName: string;
-  itemType: 'budget' | 'pot';
+  itemType: 'budget' | 'pot' | 'transaction';
   isDeleting: boolean;
 }
 

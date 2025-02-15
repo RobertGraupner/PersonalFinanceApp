@@ -17,6 +17,8 @@ export function TransactionFormModal({
   onClose,
   onSubmit,
   isLoading,
+  type,
+  transaction,
 }: TransactionFormModalProps) {
   const {
     control,
@@ -27,10 +29,12 @@ export function TransactionFormModal({
     formState: { errors },
   } = useForm<TransactionFormData>({
     defaultValues: {
-      name: '',
-      category: 'General',
-      amount: '',
-      recurring: false,
+      name: transaction?.name || '',
+      category: transaction?.category || 'General',
+      amount: transaction?.amount
+        ? Math.abs(transaction.amount).toString()
+        : '',
+      recurring: transaction?.recurring || false,
     },
   });
 
@@ -39,19 +43,39 @@ export function TransactionFormModal({
   useEffect(() => {
     if (!isOpen) {
       reset();
+    } else {
+      reset({
+        name: transaction?.name || '',
+        category: transaction?.category || 'General',
+        amount: transaction?.amount
+          ? Math.abs(transaction.amount).toString()
+          : '',
+        recurring: transaction?.recurring || false,
+      });
     }
-  }, [isOpen, reset]);
+  }, [isOpen, transaction, reset]);
+
+  const handleClose = () => {
+    onClose();
+  };
 
   const onFormSubmit = (data: TransactionFormData) => {
     onSubmit(data);
   };
 
+  const title = type === 'add' ? 'Add Transaction' : 'Edit Transaction';
+  const description =
+    type === 'add'
+      ? 'Add a new transaction to track your spending or income.'
+      : 'Edit your transaction details.';
+  const buttonText = type === 'add' ? 'Add Transaction' : 'Save Changes';
+
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
-      title="Add Transaction"
-      description="Add a new transaction to track your spending or income."
+      onClose={handleClose}
+      title={title}
+      description={description}
     >
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
         <div className="">
@@ -133,7 +157,7 @@ export function TransactionFormModal({
             disabled={isLoading}
             className="w-full rounded-lg bg-grey900 px-6 py-4 text-preset-4 font-bold text-white"
           >
-            {isLoading ? 'Processing...' : 'Add Transaction'}
+            {isLoading ? 'Processing...' : buttonText}
           </Button>
         </div>
       </form>

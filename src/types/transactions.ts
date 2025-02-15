@@ -8,7 +8,8 @@ export type TransactionWithStatus = ITransaction & {
 };
 
 export interface TransactionsTableProps {
-  transactions: TransactionWithStatus[];
+  transactions: ITransaction[];
+  onAction: (type: 'edit' | 'delete', transaction: ITransaction) => void;
 }
 
 export interface PaginationProps {
@@ -17,7 +18,8 @@ export interface PaginationProps {
 }
 
 export interface TransactionItemProps {
-  transaction: TransactionWithStatus;
+  transaction: ITransaction;
+  onAction: (type: 'edit' | 'delete', transaction: ITransaction) => void;
 }
 
 export interface PageButtonProps {
@@ -62,4 +64,28 @@ export interface TransactionFormModalProps {
   onClose: () => void;
   onSubmit: (data: TransactionFormData) => void;
   isLoading: boolean;
+  type: 'add' | 'edit';
+  transaction?: ITransaction | null;
 }
+
+export type FormModalType = 'add' | 'edit';
+export type DeleteModalType = 'delete';
+export type ModalType = FormModalType | DeleteModalType;
+
+export interface FormModalState {
+  type: FormModalType;
+  transaction: ITransaction | null;
+}
+
+export interface DeleteModalState {
+  type: DeleteModalType;
+  transaction: ITransaction;
+}
+
+export type ModalState =
+  | {
+      type: null;
+      transaction: null;
+    }
+  | FormModalState
+  | DeleteModalState;

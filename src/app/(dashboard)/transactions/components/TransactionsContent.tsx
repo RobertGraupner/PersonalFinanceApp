@@ -1,7 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useTransactions, useAddTransaction } from '@/hooks/useTransactions';
+import {
+  useTransactions,
+  useAddTransaction,
+  useEditTransaction,
+  useDeleteTransaction,
+} from '@/hooks/useTransactions';
 import { TransactionsTable } from './TransactionsTable';
 import { TransactionsHeader } from './TransactionsHeader';
 import { ErrorPage } from '@/components/Ui/ErrorPage';
@@ -12,28 +17,75 @@ import { TransactionsSkeleton } from './TransactionsSkeleton';
 import { PageHeader } from '@/components/Ui/PageHeader';
 import { TransactionFormModal } from './TransactionFormModal';
 import { EmptyTableState } from '@/components/Ui/EmptyTableState';
+import { DeleteModal } from '@/components/Ui/DeleteModal';
 import { useSearchParams } from 'next/navigation';
 import type { TransactionFormData } from '@/types/transactions';
+import type { ITransaction } from '@/lib/models/Transaction';
+import type { ModalState } from '@/types/transactions';
 
 export function TransactionsContent() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalState, setModalState] = useState<ModalState>({
+    type: null,
+    transaction: null,
+  });
+
   const searchParams = useSearchParams();
   const { data, isLoading, error } = useTransactions();
   const addTransaction = useAddTransaction();
+  const editTransaction = useEditTransaction();
+  const deleteTransaction = useDeleteTransaction();
 
   const hasFilters = searchParams.toString().length > 0;
 
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
+  function openFormModal(type: 'add' | 'edit', transaction?: ITransaction) {
+    setModalState({ type, transaction: transaction || null });
+  }
 
-  const handleAddTransaction = async (data: TransactionFormData) => {
+  function openDeleteModal(transaction: ITransaction) {
+    setModalState({ type: 'delete', transaction });
+  }
+
+  function handleAction(type: 'delete' | 'edit', transaction: ITransaction) {
+    if (type === 'delete') {
+      openDeleteModal(transaction);
+    } else if (type === 'edit') {
+      openFormModal('edit', transaction);
+    }
+  }
+
+  const handleFormSubmit = async (formData: TransactionFormData) => {
     try {
-      await addTransaction.mutateAsync(data);
+      if (modalState.type === 'edit' && modalState.transaction?._id) {
+        await editTransaction.mutateAsync({
+          id: modalState.transaction._id,
+          ...formData,
+          amount: parseFloat(formData.amount.replace(',', '.')),
+        });
+      } else {
+        await addTransaction.mutateAsync(formData);
+      }
       handleCloseModal();
     } catch (error) {
-      console.error('Failed to add transaction:', error);
+      console.error('Failed to save transaction:', error);
     }
   };
+
+  const handleDeleteTransaction = async () => {
+    if (!modalState.transaction?._id) return;
+    try {
+      await deleteTransaction.mutateAsync(modalState.transaction._id);
+      handleCloseModal();
+    } catch (error) {
+      console.error('Failed to delete transaction:', error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalState({ type: null, transaction: null });
+  };
+
+  const isEditMode = modalState.type === 'edit';
+  const isFormModalOpen = modalState.type === 'add' || isEditMode;
 
   if (error) {
     return (
@@ -50,7 +102,7 @@ export function TransactionsContent() {
         <PageHeader
           title="Transactions"
           addButtonLabel="+ Add New Transaction"
-          onAddClick={handleOpenModal}
+          onAddClick={() => openFormModal('add')}
         />
         <ContentCard>
           <TransactionsHeader />
@@ -63,12 +115,19 @@ export function TransactionsContent() {
   if (!data?.data || (data.data.length === 0 && !hasFilters)) {
     return (
       <>
-        <EmptyDataPage viewType="transactions" onAddClick={handleOpenModal} />
+        <EmptyDataPage
+          viewType="transactions"
+          onAddClick={() => openFormModal('add')}
+        />
         <TransactionFormModal
-          isOpen={isModalOpen}
+          isOpen={isFormModalOpen}
           onClose={handleCloseModal}
-          onSubmit={handleAddTransaction}
-          isLoading={addTransaction.isPending}
+          onSubmit={handleFormSubmit}
+          isLoading={
+            isEditMode ? editTransaction.isPending : addTransaction.isPending
+          }
+          type={isEditMode ? 'edit' : 'add'}
+          transaction={modalState.transaction}
         />
       </>
     );
@@ -79,13 +138,16 @@ export function TransactionsContent() {
       <PageHeader
         title="Transactions"
         addButtonLabel="+ Add New Transaction"
-        onAddClick={handleOpenModal}
+        onAddClick={() => openFormModal('add')}
       />
       <ContentCard>
         <TransactionsHeader />
         {data?.data && data.data.length > 0 ? (
           <>
-            <TransactionsTable transactions={data.data} />
+            <TransactionsTable
+              transactions={data.data}
+              onAction={(type, transaction) => handleAction(type, transaction)}
+            />
             {data.pagination && (
               <Pagination
                 currentPage={data.pagination.currentPage!}
@@ -101,11 +163,24 @@ export function TransactionsContent() {
         )}
       </ContentCard>
 
-      <TransactionFormModal
-        isOpen={isModalOpen}
+      <DeleteModal
+        isOpen={modalState.type === 'delete'}
         onClose={handleCloseModal}
-        onSubmit={handleAddTransaction}
-        isLoading={addTransaction.isPending}
+        onConfirm={handleDeleteTransaction}
+        isDeleting={deleteTransaction.isPending}
+        itemName={modalState.transaction?.name || ''}
+        itemType="transaction"
+      />
+
+      <TransactionFormModal
+        isOpen={isFormModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleFormSubmit}
+        isLoading={
+          isEditMode ? editTransaction.isPending : addTransaction.isPending
+        }
+        type={isEditMode ? 'edit' : 'add'}
+        transaction={modalState.transaction}
       />
     </div>
   );

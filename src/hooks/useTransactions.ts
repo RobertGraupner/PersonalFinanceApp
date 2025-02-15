@@ -67,6 +67,76 @@ export function useAddTransaction() {
           queryKey: ['overview'],
           refetchType: 'all',
         }),
+        queryClient.invalidateQueries({
+          queryKey: ['budgets'],
+          refetchType: 'all',
+        }),
+      ]);
+    },
+  });
+}
+
+export function useDeleteTransaction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/transactions/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete transaction');
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['transactions'],
+          refetchType: 'all',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['overview'],
+          refetchType: 'all',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['budgets'],
+          refetchType: 'all',
+        }),
+      ]);
+    },
+  });
+}
+
+export function useEditTransaction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...transaction
+    }: Partial<ITransaction> & { id: string }) => {
+      const response = await fetch(`/api/transactions/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(transaction),
+      });
+      if (!response.ok) throw new Error('Failed to edit transaction');
+      return response.json();
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['transactions'],
+          refetchType: 'all',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['overview'],
+          refetchType: 'all',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['budgets'],
+          refetchType: 'all',
+        }),
       ]);
     },
   });

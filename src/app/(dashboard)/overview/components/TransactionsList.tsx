@@ -30,14 +30,13 @@ export function TransactionsList({ transactions }: TransactionsListProps) {
               <div className="flex items-center justify-between py-3">
                 <div className="flex items-center gap-3">
                   {isIconName && (
-                    <div className="h-10 w-10 rounded-full bg-grey100 p-2">
-                      <IconRenderer
-                        iconName={
-                          transaction.avatar as keyof typeof CATEGORY_ICONS
-                        }
-                        className="h-full w-full text-grey900"
-                      />
-                    </div>
+                    <IconRenderer
+                      iconName={
+                        transaction.avatar as keyof typeof CATEGORY_ICONS
+                      }
+                      category={transaction.category}
+                      className="h-full w-full text-white"
+                    />
                   )}
                   {!isIconName && (
                     <Image

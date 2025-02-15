@@ -73,6 +73,7 @@ export const TABLE_COLUMNS = [
   { key: 'category', label: 'Category' },
   { key: 'date', label: 'Transaction date' },
   { key: 'amount', label: 'Amount' },
+  { key: 'edit', label: '' },
 ] as const;
 
 export const RECURRING_TABLE_COLUMNS = [

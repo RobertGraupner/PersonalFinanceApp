@@ -3,7 +3,10 @@ import type { TransactionsTableProps } from '@/types/transactions';
 import { TransactionItem } from './TransactionItem';
 import { cn } from '@/lib/utils/cn';
 
-export function TransactionsTable({ transactions }: TransactionsTableProps) {
+export function TransactionsTable({
+  transactions,
+  onAction,
+}: TransactionsTableProps) {
   return (
     <table className="w-full">
       <thead className="hidden sm:table-header-group">
@@ -28,7 +31,11 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
       </thead>
       <tbody>
         {transactions.map((transaction) => (
-          <TransactionItem key={transaction._id} transaction={transaction} />
+          <TransactionItem
+            key={transaction._id}
+            transaction={transaction}
+            onAction={(type) => onAction(type, transaction)}
+          />
         ))}
       </tbody>
     </table>

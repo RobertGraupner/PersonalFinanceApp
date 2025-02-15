@@ -4,10 +4,13 @@ import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { cn } from '@/lib/utils/cn';
 import type { TransactionItemProps } from '@/types/transactions';
 import { CATEGORY_ICONS } from '@/constants/transactions';
-
+import { ActionMenu } from '@/components/Ui/ActionMenu';
 import { IconRenderer } from '@/components/Ui/IconRenderer';
 
-export function TransactionItem({ transaction }: TransactionItemProps) {
+export function TransactionItem({
+  transaction,
+  onAction,
+}: TransactionItemProps) {
   const formattedDate = format(new Date(transaction.date), 'd MMM yyyy');
   const isPositiveAmount = transaction.amount > 0;
   const cellClasses = 'py-4 px-1 first:pl-0 last:pr-0';
@@ -17,7 +20,7 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
 
   return (
     <tr className="border-b border-grey100 last:border-none">
-      <td className={cn(cellClasses, 'w-[40%]')}>
+      <td className={cn(cellClasses, 'w-[35%]')}>
         <div className="flex items-center gap-4">
           {isIconName && (
             <IconRenderer
@@ -88,6 +91,13 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
             {formattedDate}
           </span>
         </div>
+      </td>
+      <td className={cn(cellClasses, 'w-[5%]', 'text-center')}>
+        <ActionMenu
+          onEdit={() => onAction('edit', transaction)}
+          onDelete={() => onAction('delete', transaction)}
+          type="transaction"
+        />
       </td>
     </tr>
   );

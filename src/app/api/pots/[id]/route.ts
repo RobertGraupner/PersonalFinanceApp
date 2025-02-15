@@ -11,7 +11,6 @@ function isValidId(id: string): boolean {
   return mongoose.Types.ObjectId.isValid(id);
 }
 
-// Pobranie pojedynczego słoika (pot)
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -65,7 +64,6 @@ export async function GET(
   }
 }
 
-// Aktualizacja słoika lub dodanie/wycofanie środków
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -87,7 +85,6 @@ export async function PUT(
 
     await connectDB();
 
-    // Używamy sesji żeby zapewnić atomowość operacji
     mongoSession = await mongoose.startSession();
     mongoSession.startTransaction();
 
@@ -103,7 +100,6 @@ export async function PUT(
 
     const body = await request.json();
 
-    // Jeżeli przekazana jest operacja (dodanie/wycofanie środków)
     if (body.operation && body.amount) {
       const { amount, operation } = body as MoneyOperation;
 
@@ -142,7 +138,7 @@ export async function PUT(
       }
 
       if (operation === 'addMoney') {
-        // Sprawdzamy czy użytkownik ma wystarczające środki
+        // Check if the user has enough funds
         if (user.balance.current < amount) {
           await mongoSession.abortTransaction();
           return NextResponse.json(
@@ -153,14 +149,14 @@ export async function PUT(
           );
         }
 
-        // Pobieramy środki z salda użytkownika
+        // Withdraw the funds from the user's balance
         await User.findByIdAndUpdate(
           userSession.user.id,
           { $inc: { 'balance.current': -amount } },
           { session: mongoSession }
         );
 
-        // Dodajemy środki do słoika
+        // Add the funds to the pot
         await Pot.findOneAndUpdate(
           {
             _id: new mongoose.Types.ObjectId(id),
@@ -170,7 +166,7 @@ export async function PUT(
           { session: mongoSession }
         );
       } else if (operation === 'withdraw') {
-        // Sprawdzamy czy słoik ma wystarczające środki
+        // Check if the pot has enough funds
         if (pot.total < amount) {
           await mongoSession.abortTransaction();
           return NextResponse.json(
@@ -179,14 +175,14 @@ export async function PUT(
           );
         }
 
-        // Dodajemy środki do salda użytkownika
+        // Withdraw the funds from the pot
         await User.findByIdAndUpdate(
           userSession.user.id,
           { $inc: { 'balance.current': amount } },
           { session: mongoSession }
         );
 
-        // Pobieramy środki z słoika
+        // Update the pot total
         await Pot.findByIdAndUpdate(
           {
             _id: new mongoose.Types.ObjectId(id),
@@ -199,7 +195,6 @@ export async function PUT(
 
       await mongoSession.commitTransaction();
     } else {
-      // Zwykła aktualizacja słoika
       const updatedPot = await Pot.findOneAndUpdate(
         {
           _id: new mongoose.Types.ObjectId(id),
@@ -240,7 +235,6 @@ export async function PUT(
   }
 }
 
-// Usunięcie słoika
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -290,7 +284,7 @@ export async function DELETE(
       );
     }
 
-    // Zwracamy środki do salda użytkownika
+    // Return the funds to the user's balance
     await User.findByIdAndUpdate(
       userSession.user.id,
       { $inc: { 'balance.current': pot.total } },
