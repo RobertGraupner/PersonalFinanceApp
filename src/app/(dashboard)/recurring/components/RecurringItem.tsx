@@ -1,11 +1,12 @@
 import Image from 'next/image';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { cn } from '@/lib/utils/cn';
-import type { TransactionItemProps } from '@/types/transactions';
+import type { RecurringItemProps } from '@/types/transactions';
 import { getDayWithSuffix } from '@/lib/utils/getDayWithSuffix';
 import { IconRenderer } from '@/components/Ui/IconRenderer';
 import { CATEGORY_ICONS } from '@/constants/transactions';
-export function RecurringItem({ transaction }: TransactionItemProps) {
+
+export function RecurringItem({ transaction }: RecurringItemProps) {
   const formattedDate = `Monthly - ${getDayWithSuffix(new Date(transaction.date))}`;
   const isPositiveAmount = transaction.amount > 0;
   const cellClasses = 'py-4 px-1 first:pl-0 last:pr-0';

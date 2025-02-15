@@ -12,6 +12,10 @@ export interface TransactionsTableProps {
   onAction: (type: 'edit' | 'delete', transaction: ITransaction) => void;
 }
 
+export interface RecurringTableProps {
+  transactions: TransactionWithStatus[];
+}
+
 export interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -89,3 +93,7 @@ export type ModalState =
     }
   | FormModalState
   | DeleteModalState;
+
+export interface RecurringItemProps {
+  transaction: TransactionWithStatus;
+}

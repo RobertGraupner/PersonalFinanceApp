@@ -1,9 +1,9 @@
 import { RECURRING_TABLE_COLUMNS } from '@/constants/transactions';
-import type { TransactionsTableProps } from '@/types/transactions';
+import type { RecurringTableProps } from '@/types/transactions';
 import { RecurringItem } from './RecurringItem';
 import { cn } from '@/lib/utils/cn';
 
-export function RecurringTable({ transactions }: TransactionsTableProps) {
+export function RecurringTable({ transactions }: RecurringTableProps) {
   return (
     <table className="w-full">
       <thead className="hidden sm:table-header-group">

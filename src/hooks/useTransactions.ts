@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { INCOME_CATEGORIES } from '@/constants/transactions';
 import type { TransactionFormData } from '@/types/transactions';
+import { invalidateQueriesAfterMutation } from '@/lib/utils/queryInvalidation';
 
 export function useTransactions() {
   const searchParams = useSearchParams();
@@ -58,20 +59,7 @@ export function useAddTransaction() {
       return response.json();
     },
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['transactions'],
-          refetchType: 'all',
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['overview'],
-          refetchType: 'all',
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['budgets'],
-          refetchType: 'all',
-        }),
-      ]);
+      await invalidateQueriesAfterMutation(queryClient);
     },
   });
 }
@@ -87,20 +75,7 @@ export function useDeleteTransaction() {
       if (!response.ok) throw new Error('Failed to delete transaction');
     },
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['transactions'],
-          refetchType: 'all',
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['overview'],
-          refetchType: 'all',
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['budgets'],
-          refetchType: 'all',
-        }),
-      ]);
+      await invalidateQueriesAfterMutation(queryClient);
     },
   });
 }
@@ -124,20 +99,7 @@ export function useEditTransaction() {
       return response.json();
     },
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['transactions'],
-          refetchType: 'all',
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['overview'],
-          refetchType: 'all',
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['budgets'],
-          refetchType: 'all',
-        }),
-      ]);
+      await invalidateQueriesAfterMutation(queryClient);
     },
   });
 }
